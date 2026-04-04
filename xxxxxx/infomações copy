@@ -1,0 +1,166 @@
+
+Seja em qulu parte deve ser aplciado a regra de ouro. que é quando gere uma idneficaçãod de tem que nuemro del ou codio registars, exmeplo, "master" é um agupador, toda vez for criado tem que ter le, se ja tem crido o dendifao , del ai adcion o nomro, exemplo: vou cria um cadtarso, por regra tem que ter o "master" agraupador, e  "usuario" , afinla para ter u cdatra de usai reco esta agrupado a u master.
+outro exemplo.
+quero cria um negocio proor, nesse caso o cleinte tem qye tere u cadastrao, e agora precisnhe o fomulario, e ond eja gera o idengicando de "negocio" d efoma altomaica, asism oa dmn a pena saprova.
+outro exemplo.
+ja o usuair ja tem seu seu "master" agrupador", pois ja tem seu cadadsto "uuuari", e sua empresa "negocio", ou não, mas ele que indicar uma empresa , preenhe o fomulaio, quando faz isos , gere um novo "Master", e "Negocio", mas esse estabelneo não fica ligador ao "master"  de que criou. nesse.
+
+
+admin.html (Painel Administrativo)
+perfil.html (Área do Usuário)
+styles.css (Estilos Compartilhados)
+scripts.js (Lógica Compartilhada)
+
+
+
+
+
+
+
+////////////////////
+
+
+TABELA empresa:
+
+master        TEXT     → M-XXXXXX (OBRIGATÓRIO)
+negocio       TEXT     → N-XXXXXX (obrigatório para empresas)
+usuario       TEXT     → U-XXXXXX (se tiver dono)
+sugestao      TEXT     → S-XXXXXX (se veio de indicação)
+status_conta  TEXT
+status_negocio INTEGER
+status_usuario TEXT
+empresa       TEXT
+telefone      TEXT
+email         TEXT
+site          TEXT
+cardapio      TEXT
+redes_sociais1 TEXT
+cep           TEXT
+complemento   TEXT
+bairro        TEXT
+cidade        TEXT
+uf            TEXT
+latitude      REAL
+longitude     REAL
+horario_atendimento1 TEXT
+horario_atendimento2 TEXT
+horario_happy1 TEXT
+horario_happy2 TEXT
+oferta_tipo   TEXT
+oferta_valida TEXT
+oferta_destaque TEXT
+oferta_detalhe TEXT
+oferta_regras TEXT
+oferta_enviada INTEGER
+criado_data   TEXT
+criado_horario TEXT
+
+
+TABELA usuario:
+
+master        TEXT     → M-XXXXXX (OBRIGATÓRIO)
+negocio       TEXT     → N-XXXXXX (se tiver negócio)
+usuario       TEXT     → U-XXXXXX (obrigatório para usuários)
+sugestao      TEXT     → S-XXXXXX (se veio de indicação)
+nome          TEXT
+nasc          TEXT
+telefone      TEXT
+email         TEXT
+senha_hash    TEXT
+cep           TEXT
+rua           TEXT
+num           TEXT
+comp          TEXT
+bairro        TEXT
+cidade        TEXT
+uf            TEXT
+status        TEXT
+perfil_id     TEXT
+criado_em     TEXT
+
+
+
+/////////////////
+ento deve expli aisos , pos que acece tem mostar quanso  pesso est sunaod "admin.html" e ta usando "peffil.html" quem , no cais ciente so pode cxria  asism:
+temq ue ter uma conta  nos istem para faez quique coiaas, 
+noc aso ele briad cria um suairo "usuario  → U-200001" , mas ate de cria o o "usuario  → U-200001" o sistema aurmmaticamee  cria um  "master   → M-100001" que noc aos vai agurotar o "usuario  → U-200001", nesse narios o pesis stem seu proprio neco, nesse caos ele cir aum egico "negocio  → N-400001 (opcional)" que , que perevc e a eles exlucivisamene "usuario  → U-200001", ja ele achou um erpes bo e viu que r idnica el apar o sstema, "sugestao → S-300001",quandoele fz oscitaça atarvbes do fmeunarios eedindo, , isos cria aurmantio no sistema  um "master   → M-100002" que é u novo agarpador, que esta grnado o "master   → M-100001", que nao perdtenet mais  o "usuario  → U-200001" o do master deles .
+
+/////////////
+
+🧠 IDEIA CENTRAL DO SEU SISTEMA
+
+Você tem 2 tipos de MASTER:
+
+✅ MASTER do usuário (principal)
+✅ MASTER de sugestão (novo, separado)
+
+👉 Ou seja:
+
+Uma sugestão cria um novo agrupador, mesmo que venha de um usuário
+
+🔑 REGRA GERAL
+
+👉 Usuário nunca perde o Master dele
+👉 Sugestão gera um novo Master independente
+
+🧩 FLUXO COMPLETO (PASSO A PASSO)
+👤 1. Usuário cria conta (perfil.html)
+
+✔ O sistema faz automaticamente:
+
+master   → M-100001
+usuario  → U-200001
+
+👉 Esse é o MASTER PRINCIPAL do usuário
+
+🏢 2. Usuário cria o próprio negócio
+
+✔ Continua no mesmo master:
+
+master   → M-100001
+usuario  → U-200001
+negocio  → N-400001
+
+👉 Esse negócio pertence exclusivamente ao usuário
+
+💡 3. Usuário faz uma sugestão
+
+Aqui está a parte MAIS IMPORTANTE 👇
+
+✔ O sistema cria:
+
+master   → M-100002  (NOVO MASTER)
+sugestao → S-300001
+🔗 Relação entre os masters
+
+👉 Você explicou isso aqui:
+
+"M-100002 está ligado ao M-100001, mas não pertence ao usuário"
+
+✔ Então fica assim:
+
+master_novo (M-100002)
+    → origem_master: M-100001
+📊 VISÃO FINAL (estrutura correta)
+🧍 Usuário
+master   → M-100001
+usuario  → U-200001
+🏢 Negócio do usuário
+master   → M-100001
+negocio  → N-400001
+💡 Sugestão (separada)
+master         → M-100002
+sugestao       → S-300001
+origem_master  → M-100001
+🚨 PONTO MAIS IMPORTANTE
+
+👉 A sugestão NÃO pertence diretamente ao usuário
+
+✔ Ela pertence a um novo master
+✔ Mas guarda referência de quem criou
+
+🔒 REGRA DE OURO FINAL (SUA LÓGICA)
+1. Todo usuario tem 1 master próprio
+2. Negocios do usuario usam esse master
+3. Sugestão cria um NOVO master
+4. Novo master guarda referencia ao master original

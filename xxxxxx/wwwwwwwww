@@ -1,0 +1,62 @@
+comandos node:
+
+
+
+cd anivapp
+
+
+npm start
+
+
+----------
+deletar: 
+Remove-Item dados.db, dados.db-shm, dados.db-wal -ErrorAction SilentlyContinue
+npm start
+
+taskkill /PID 11640 /F
+npm start
+----------------------
+
+cd E:\aniversario-programa\anivapp; netstat -ano | findstr :3000 | ForEach-Object { taskkill /PID ($_ -split '\s+')[-1] /F }; Remove-Item dados.db, dados.db-shm, dados.db-wal -ErrorAction SilentlyContinue; npm start
+
+cd E:\aniversario-programa\anivapp; netstat -ano | findstr :3000 | ForEach-Object { taskkill /PID ($_ -split '\s+')[-1] /F }; Remove-Item dados.db, dados.db-shm, dados.db-wal -ErrorAction SilentlyContinue; npm start
+
+/////////////
+enta  regra do sistema é "priemo a epssoa temq que ter umc cadaraos, ar isso precisa cia ma cota! nesse caso cria um usuario, que lgo de cara é obrigado a criar "master" e "usuario", com aorele tem isso,   ele agora pdoe pedii para cei o negiocio dlele que nsse caso deve ir para tababela "empresas", ali lid edetr um coluna onde va terq ue ser checada, afinal quando o admin aprovar a empresa, ela muda deestdor, vamos supoer de "01"(pendente), para "02" (ativo), ou 03 (cancelado). 
+
+
+
+sugestão:
+
+qualquer pessoa pdo idnicar, no caso a epsos temq ue ter um cadastro (onde teqm que ter o MASTER + USUARIO", se fazer socitação "SUGESTÂO" nesse caso , via gerar um novo "MASTER"  e "SEGESTAO" que no caso usa abela sugestão, que é uam copia fiel da tabla  empresas"
+
+e nunca fi ligada ao quem fez soliaaçao "(USUAERIOA"
+
+Entendi perfeitamente agora! A regra completa é:
+
+Cadastro (obrigatório para tudo):
+
+Pessoa cria conta → gera USUARIO + MASTER
+
+
+Negócio (dono):
+
+Usa o MASTER do próprio usuário
+Vai direto para tabela empresas
+Coluna status: 01 = pendente, 02 = ativo, 03 = cancelado
+Quando admin aprova → muda status de 01 para 02
+
+
+Sugestão (indicação):
+
+Gera um MASTER novo + SUGESTAO novo
+Vai para tabela sugestoes (cópia fiel de empresas)
+Nunca fica vinculada ao USUARIO que fez a solicitação
+Quando admin aprova → vira uma empresa normal, sem dono
+
+
+Então o problema atual é que:
+
+sugestoes e empresas têm estruturas diferentes — precisam ser idênticas
+empresas precisa de coluna status com valores 01/02/03
+O negócio do dono deveria ir direto para empresas com status = 01, não para

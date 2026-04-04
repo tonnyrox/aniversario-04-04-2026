@@ -1,0 +1,142 @@
+admin@admin.com
+admin123
+
+teste@teste.com
+Login: admin@anivcrm.com
+Senha: admin123
+
+
+tabelas 
+
+
+empresa: 
+
+"negocio	TEXT
+master	TEXT
+usuario	TEXT
+status_conta	TEXT
+status_negocio	INTEGER
+status_usuario	TEXT
+empresa	TEXT
+telefone	TEXT
+email	TEXT
+site	TEXT
+cardapio	TEXT
+redes_sociais1	TEXT
+cep	TEXT
+complemento	TEXT
+bairro	TEXT
+cidade	TEXT
+uf	TEXT
+latitude	REAL
+longitude	REAL
+horario_atendimento1	TEXT
+horario_atendimento2	TEXT
+horario_happy1	TEXT
+horario_happy2	TEXT
+oferta_tipo	TEXT
+oferta_valida	TEXT
+oferta_destaque	TEXT
+oferta_detalhe	TEXT
+oferta_regras	TEXT
+oferta_enviada	INTEGER
+criado_data	TEXT
+criado_horario	TEXT
+
+
+
+"
+
+
+usuario:
+"
+usuario	TEXT
+master	TEXT
+nome	TEXT
+nasc	TEXT
+telefone	TEXT
+email	TEXT
+senha_hash	TEXT
+cep	TEXT
+rua	TEXT
+num	TEXT
+comp	TEXT
+bairro	TEXT
+cidade	TEXT
+uf	TEXT
+status	TEXT
+perfil_id	TEXT
+criado_em	TEXT
+"
+/////////////////
+
+
+acredio que pord emlhro todo  o coi usoando tabelas duas tabela ssendo uma "empresa" e a outra "usuario", asis centaliza e deix mais organizado, so asism cada coisa fic aem seu lugar, "master	TEXT
+negocio	TEXT
+usuario	TEXT
+sugestao  TEXT" afin esse aqui cad um teria como idedifica, so lembrando que sempre tem que ter "master", seja "negocio"	,"usuario", "sugestao  
+
+
+empresa: 
+
+"
+master	TEXT
+negocio	TEXT
+usuario	TEXT
+sugestao  TEXT
+status_conta	TEXT
+status_negocio	INTEGER
+status_usuario	TEXT
+empresa	TEXT
+telefone	TEXT
+email	TEXT
+site	TEXT
+cardapio	TEXT
+redes_sociais1	TEXT
+cep	TEXT
+complemento	TEXT
+bairro	TEXT
+cidade	TEXT
+uf	TEXT
+latitude	REAL
+longitude	REAL
+horario_atendimento1	TEXT
+horario_atendimento2	TEXT
+horario_happy1	TEXT
+horario_happy2	TEXT
+oferta_tipo	TEXT
+oferta_valida	TEXT
+oferta_destaque	TEXT
+oferta_detalhe	TEXT
+oferta_regras	TEXT
+oferta_enviada	INTEGER
+criado_data	TEXT
+criado_horario	TEXT
+
+
+
+"
+
+
+usuario:
+"
+master	TEXT
+negocio	TEXT
+usuario	TEXT
+sugestao  TEXT
+nome	TEXT
+nasc	TEXT
+telefone	TEXT
+email	TEXT
+senha_hash	TEXT
+cep	TEXT
+rua	TEXT
+num	TEXT
+comp	TEXT
+bairro	TEXT
+cidade	TEXT
+uf	TEXT
+status	TEXT
+perfil_id	TEXT
+criado_em	TEXT
+"
