@@ -1,0 +1,56 @@
+Passo a passo detalhado para subir a aplicação para o endereço "aniversario.sahe.com.br" (hospedagem compartilhada):
+
+1. **Verifique os requisitos da hospedagem:**
+   - Confirme se a hospedagem compartilhada suporta Node.js. Muitos provedores de hospedagem compartilhada (como Hostinger, UOL Host, Locaweb, etc.) oferecem suporte limitado ou nenhum para aplicações Node.js. Verifique no painel de controle se há uma seção "Node.js" ou "Aplicações Web". Se não suportar, considere migrar para um plano VPS (como na DigitalOcean ou AWS Lightsail) ou um provedor que suporte Node.js (como Heroku, Vercel, Railway ou Render).
+   - Verifique se você tem acesso via FTP/SFTP, cPanel, Plesk ou painel de controle similar. Anote as credenciais: host FTP (geralmente ftp.aniversario.sahe.com.br), usuário, senha e porta (21 para FTP, 22 para SFTP).
+   - Certifique-se de que o domínio "aniversario.sahe.com.br" está apontando corretamente para o servidor (verifique os registros DNS A ou CNAME).
+
+2. **Prepare a aplicação localmente:**
+   - Abra o terminal no diretório do projeto (anivapp/) e execute `npm install` para instalar todas as dependências listadas no package.json.
+   - Teste a aplicação localmente: execute `node server.js` (ou o comando definido em "scripts"."start" no package.json, como `npm start`). Verifique se o servidor inicia na porta local (ex: 3000) e acesse http://localhost:3000 no navegador.
+   - Se a aplicação usar um bundler (como Webpack) ou precisar de build, execute o comando de build (ex: `npm run build`) para gerar arquivos otimizados na pasta dist/ ou build/.
+   - Compacte os arquivos da aplicação em um arquivo ZIP. Inclua: server.js, package.json, scripts.js, styles.css, arquivos HTML (admin.html, launcher.html, perfil.html), e pastas como node_modules (se o servidor permitir upload, mas geralmente é melhor instalar no servidor). Exclua arquivos desnecessários como .git, logs ou arquivos temporários.
+   - Verifique o package.json: anote a versão do Node.js necessária (campo "engines"."node"), as dependências e o script de start.
+
+3. **Acesse o painel de controle da hospedagem:**
+   - Faça login no painel de controle do seu provedor (ex: https://cpanel.aniversario.sahe.com.br ou similar) usando as credenciais fornecidas (usuário e senha).
+   - Localize a seção de FTP (para upload de arquivos) ou Gerenciador de Arquivos (para navegar e editar arquivos diretamente no servidor).
+
+4. **Faça upload dos arquivos via FTP:**
+   - Baixe e instale um cliente FTP como FileZilla (gratuito) ou use o gerenciador de arquivos do cPanel.
+   - No FileZilla: Insira o host (ftp.aniversario.sahe.com.br), usuário, senha e porta (21). Clique em "Conectar".
+   - Navegue no painel direito (servidor) até a pasta pública do domínio: geralmente "public_html", "www" ou a raiz do domínio "aniversario.sahe.com.br". Se for uma subpasta, crie uma nova pasta se necessário (ex: /public_html/anivapp).
+   - No painel esquerdo (local), selecione o arquivo ZIP compactado e arraste para o painel direito para fazer upload.
+   - Após upload, descompacte o ZIP no servidor: No gerenciador de arquivos do cPanel, clique com o botão direito no ZIP e selecione "Extract" ou use um comando via SSH se disponível (ex: `unzip arquivo.zip`).
+
+5. **Configure o ambiente Node.js (se suportado):**
+   - No cPanel, procure por "Node.js" ou "Setup Node.js App" (pode estar em "Software" ou "Avançado").
+   - Clique em "Create Application" ou "Criar Aplicação".
+   - Selecione a versão do Node.js compatível (ex: 16.x ou 18.x, baseada no package.json).
+   - Defina o diretório da aplicação: o caminho onde você descompactou os arquivos (ex: /home/usuario/public_html/anivapp).
+   - Configure o script de inicialização: geralmente "server.js" ou o caminho completo (ex: /home/usuario/public_html/anivapp/server.js). Verifique se o package.json tem "main": "server.js".
+   - Clique em "Install Dependencies" ou similar; o painel executará `npm install` automaticamente no servidor.
+   - Defina a porta: Use a porta fornecida pelo provedor (ex: 3001 ou uma específica), não 3000. Atualize seu server.js se necessário para usar essa porta (ex: process.env.PORT || 3000).
+   - Salve e inicie a aplicação. O painel pode fornecer um URL de proxy (ex: https://aniversario.sahe.com.br:porta) para acessar.
+
+6. **Configure o domínio:**
+   - No painel de controle, vá para "Domínios" > "Addon Domains" ou "Gerenciador de Domínios".
+   - Adicione o domínio "aniversario.sahe.com.br" se ainda não estiver listado. Defina a pasta raiz como a pasta onde a aplicação está (ex: public_html/anivapp).
+   - Certifique-se de que os registros DNS estão corretos: No registrador de domínio (ex: Registro.br), configure o registro A para apontar para o IP do servidor da hospedagem.
+   - Aguarde a propagação DNS (pode levar até 24-48 horas).
+
+7. **Teste a aplicação:**
+   - Após configurar, acesse https://aniversario.sahe.com.br no navegador (ou o URL fornecido pelo painel).
+   - Verifique se a aplicação carrega: páginas como admin.html, perfil.html devem funcionar. Teste funcionalidades como scripts.js e db-bridge.js.
+   - Se houver erros (ex: 500 Internal Server Error), consulte os logs: No cPanel, vá para "Logs" > "Error Log" ou "Node.js Logs". Procure por mensagens como "porta ocupada" ou "dependência faltando".
+   - Se a aplicação não iniciar, verifique: porta correta no server.js, todas as dependências instaladas (execute `npm install` via SSH se possível), e permissões de arquivo (chmod 755 para pastas, 644 para arquivos).
+
+8. **Considerações adicionais e troubleshooting:**
+   - Limitações de hospedagem compartilhada: Recursos limitados (CPU <1 core, RAM <512MB), então otimize o código (evite loops pesados, use cache).
+   - Segurança: Não exponha senhas ou chaves API no código. Use variáveis de ambiente se suportado (ex: process.env).
+   - Alternativas se Node.js não for suportado: Converta para PHP (use scripts PHP para funcionalidades), hospede estático no GitHub Pages, ou migre para Heroku (gratuito para apps simples).
+   - Comandos úteis via SSH (se disponível): `cd /caminho/da/app; npm install; node server.js` para testar.
+   - Backup: Faça backup dos arquivos antes de alterações.
+   - Suporte: Em caso de dúvidas, contate o suporte do provedor (ex: chat ou ticket no cPanel).
+
+Este guia é detalhado mas genérico; os passos exatos dependem do provedor (ex: Hostinger vs UOL). Consulte a documentação específica do seu provedor (ex: https://support.hostinger.com/pt/categoria/hospedagem-compartilhada/) para ajustes. Se precisar de ajuda com um passo específico, forneça mais detalhes sobre o erro ou o painel usado.
