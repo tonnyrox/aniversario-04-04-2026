@@ -1,0 +1,923 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+<title>AnivCRM - Painel Administrativo</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Inter:wght@400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body class="text-ink min-h-screen flex text-sm" style="background:var(--surface)">
+<div class="flex w-full min-h-screen">
+
+<!-- SIDEBAR -->
+<div id="sidebar-overlay" onclick="closeSidebar()"></div>
+<aside id="main-sidebar" class="sidebar-responsive w-64 min-h-screen bg-white flex flex-col fixed right-0 top-0 bottom-0 z-50 shrink-0 border-l" style="border-color:var(--surface-container-high);">
+  <div class="px-5 py-5 flex items-center justify-between" style="border-bottom:1px solid var(--surface-container-high);">
+    <div class="flex items-center gap-3">
+      <div class="w-10 h-10 azure-gradient rounded-xl flex items-center justify-center shadow-lg" style="box-shadow:0 8px 16px rgba(4,83,205,0.25);">
+        <span id="adm-iniciais-desktop" class="text-white font-bold" style="font-size:18px;">A</span>
+      </div>
+      <div>
+        <span class="block font-extrabold text-[16px] tracking-tight" style="font-family:'Manrope',sans-serif;background:linear-gradient(135deg,#0453cd,#356ee7);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;">AnivCRM</span>
+        <span class="block text-[10px] font-semibold" style="color:var(--ink-light);">Painel Admin</span>
+      </div>
+    </div>
+    <button onclick="closeSidebar()" class="md:hidden w-8 h-8 rounded-xl flex items-center justify-center transition-all" style="background:var(--surface-low);color:var(--ink-muted);" onmouseover="this.style.background='var(--surface-container)'" onmouseout="this.style.background='var(--surface-low)'">
+      <span class="material-symbols-outlined" style="font-size:18px;">close</span>
+    </button>
+  </div>
+  <nav class="px-3 py-5 flex-1 flex flex-col gap-1">
+    <button class="nav-btn active" onclick="gotoScreen('dashboard',this)">
+      <span class="material-symbols-outlined" style="font-size:18px;">dashboard</span>
+      Painel
+    </button>
+    <div class="my-2" style="border-top:1px solid var(--surface-container-high);"></div>
+    <p class="text-[10px] font-bold uppercase tracking-widest px-4 pb-2" style="color:var(--ink-light);">Gestão</p>
+    <button class="nav-btn" onclick="gotoScreen('empresas',this)">
+      <span class="material-symbols-outlined" style="font-size:18px;">storefront</span>
+      Empresas
+      <span id="badge-solicitacoes" class="hidden ml-auto bg-orange-500 text-white text-[10px] font-bold rounded-full w-5 h-5 flex items-center justify-center"></span>
+    </button>
+    <button class="nav-btn" onclick="gotoScreen('clientes',this)">
+      <span class="material-symbols-outlined" style="font-size:18px;">group</span>
+      Clientes
+    </button>
+    <button class="nav-btn" onclick="gotoScreen('aniversarios',this)">
+      <span class="material-symbols-outlined" style="font-size:18px;">cake</span>
+      Aniversários
+    </button>
+    <div class="my-2" style="border-top:1px solid var(--surface-container-high);"></div>
+    <button class="nav-btn" onclick="gotoScreen('meuperfil',this)">
+      <span class="material-symbols-outlined" style="font-size:18px;">manage_accounts</span>
+      Meu Perfil
+    </button>
+  </nav>
+</aside>
+
+<!-- MAIN -->
+<main class="main-responsive mr-64 flex-1 flex flex-col min-h-screen">
+  <header class="header-responsive main-header sticky top-0 z-40 px-4 h-14 flex items-center justify-between bg-white shadow-sm">
+    <!-- Logo (mobile) -->
+    <button id="app-logo-btn" onclick="gotoScreen('dashboard',null)" aria-label="Início" style="display: flex; align-items: center; gap: 8px; background: none; border: none; cursor: pointer; touch-action: manipulation; -webkit-tap-highlight-color: transparent; padding: 0px;">
+      <div class="w-9 h-9 azure-gradient rounded-xl flex items-center justify-center shadow-md">
+        <span id="header-iniciais" class="text-white font-bold" style="font-size:16px;">A</span>
+      </div>
+      <span style="font-family:'Manrope',sans-serif;font-weight:800;font-size:16px;background:linear-gradient(135deg,#0453cd,#356ee7);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;">AnivApp</span>
+    </button>
+    <!-- Título desktop (Logo de Bolo) -->
+    <div class="hidden md:flex items-center">
+      <img src="img/logo_bolo.png" alt="Logo Bolo" class="h-10 w-auto object-contain">
+      <span id="topbar-title" class="hidden" style="display: none;" data-logo-mode="true"></span>
+    </div>
+    <!-- Direita -->
+    <div class="flex items-center gap-3 ml-auto">
+      <!-- Mobile: botão de menu hamburger -->
+      <button onclick="toggleSidebar()" aria-label="Menu" id="header-menu-btn" class="md:hidden w-9 h-9 rounded-xl flex items-center justify-center transition-all touch-manipulation" style="background:linear-gradient(135deg,#0453cd,#356ee7);color:#fff;border:none;-webkit-tap-highlight-color:transparent;">
+        <span class="material-symbols-outlined" style="font-size:20px;">menu</span>
+      </button>
+    </div>
+  </header>
+
+  <div class="content-responsive p-8 flex-1 max-w-7xl mx-auto w-full">
+
+    <!-- DASHBOARD -->
+    <div id="screen-dashboard" class="screen">
+      <div class="flex items-end justify-between mb-6">
+        <div><h1 id="dash-greet" class="text-2xl font-bold tracking-tight">Bom dia! 👋</h1><p id="dash-sub" class="text-ink-muted text-[13px] mt-1"></p></div>
+      </div>
+      <div id="bday-alert" class="hidden mb-5 bg-primary-light border border-primary-border rounded-2xl px-5 py-4 flex items-center gap-4">
+        <div class="text-2xl">🎂</div>
+        <div class="flex-1"><div class="font-bold text-primary text-[14px] mb-0.5">Aniversariantes hoje!</div><div id="bday-alert-names" class="text-[13px] text-primary/80"></div></div>
+        <button onclick="document.getElementById('bday-alert').classList.add('hidden')" class="text-primary/40 hover:text-primary text-xl">✕</button>
+      </div>
+      <div id="stats-grid" class="grid grid-cols-4 gap-4 mb-6"></div>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+        <div class="bg-white rounded-2xl border border-edge shadow-sm"><div class="px-6 py-4 border-b border-edge flex items-center justify-between"><span class="font-semibold text-[14px]">🎂 Aniversários Hoje</span><button onclick="gotoScreen('aniversarios',null)" class="text-[12px] text-primary hover:underline">Ver todos →</button></div><div id="dash-today" class="px-6 py-4"></div></div>
+        <div class="bg-white rounded-2xl border border-edge shadow-sm"><div class="px-6 py-4 border-b border-edge"><span class="font-semibold text-[14px]">📅 Próximos 7 Dias</span></div><div id="dash-week" class="px-6 py-4"></div></div>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+        <div class="bg-white rounded-2xl border border-edge shadow-sm"><div class="px-6 py-4 border-b border-edge font-semibold text-[14px]">🏢 Empresas com mais clientes</div><div id="rel-top-emp" class="px-6 py-4"></div></div>
+        <div class="bg-white rounded-2xl border border-edge shadow-sm"><div class="px-6 py-4 border-b border-edge font-semibold text-[14px]">📅 Aniversários por Mês</div><div id="rel-bday-mes" class="px-6 py-4"></div></div>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div class="bg-white rounded-2xl border border-edge shadow-sm"><div class="px-6 py-4 border-b border-edge font-semibold text-[14px]">✓ Ofertas Enviadas vs Pendentes</div><div id="rel-ofertas" class="px-6 py-4"></div></div>
+        <div class="bg-white rounded-2xl border border-edge shadow-sm"><div class="px-6 py-4 border-b border-edge font-semibold text-[14px]">🍺 Empresas com Happy Hour</div><div id="rel-hh" class="px-6 py-4"></div></div>
+      </div>
+    </div>
+
+    <!-- EMPRESAS -->
+    <div id="screen-empresas" class="screen hidden">
+      <div class="flex flex-col sm:flex-row sm:items-start justify-between mb-6 gap-4">
+        <div><h2 class="text-xl font-bold tracking-tight mb-1">Empresas</h2><p class="text-ink-muted text-[13px]">Perfis ativos e solicitações de cadastro de donos.</p></div>
+        <div class="flex flex-col sm:flex-row gap-2 items-stretch sm:items-center shrink-0">
+          <div class="relative"><input id="search-emp" type="text" placeholder="Buscar..." oninput="renderEmpresas()" class="border border-edge rounded-lg pl-8 pr-3 h-9 text-[13px] bg-white focus:outline-none focus:border-primary w-full sm:w-52"><span class="absolute left-2.5 top-2.5 text-[12px]">🔍</span></div>
+          <button onclick="openEmpModal()" class="bg-primary hover:bg-primary-hover text-white text-[13px] font-semibold px-4 h-9 rounded-lg transition-colors whitespace-nowrap">+ Nova Empresa</button>
+        </div>
+      </div>
+      <div class="flex gap-1 mb-5 bg-surface-3 p-1 rounded-xl border border-edge overflow-x-auto" style="-webkit-overflow-scrolling:touch;">
+        <button id="emp-tab-ativas" onclick="switchEmpTab('ativas')" class="emp-tab-btn text-[13px] font-semibold px-4 py-1.5 rounded-lg transition-colors bg-white text-ink shadow-sm whitespace-nowrap">🏢 Ativas</button>
+        <button id="emp-tab-solicitacoes" onclick="switchEmpTab('solicitacoes')" class="emp-tab-btn text-[13px] font-semibold px-4 py-1.5 rounded-lg transition-colors text-ink-muted whitespace-nowrap">👑 Solicitações de Donos <span id="badge-sol-tab" class="hidden ml-1 bg-orange-500 text-white text-[10px] font-bold rounded-full px-1.5 py-0.5"></span></button>
+        <button id="emp-tab-indicacoes" onclick="switchEmpTab('indicacoes')" class="emp-tab-btn text-[13px] font-semibold px-4 py-1.5 rounded-lg transition-colors text-ink-muted whitespace-nowrap">💡 Indicações <span id="badge-ind-tab" class="hidden ml-1 bg-red-500 text-white text-[10px] font-bold rounded-full px-1.5 py-0.5"></span></button>
+      </div>
+      <div id="emp-panel-ativas">
+        <div class="bg-white rounded-2xl border border-edge shadow-sm overflow-hidden">
+          <div class="overflow-x-auto table-scroll"><table class="w-full"><thead><tr class="border-b border-edge"><th class="text-left px-4 py-3 text-[11px] font-semibold text-ink-muted uppercase tracking-wide">Empresa</th><th class="text-left px-4 py-3 text-[11px] font-semibold text-ink-muted uppercase tracking-wide">Contato</th><th class="text-left px-4 py-3 text-[11px] font-semibold text-ink-muted uppercase tracking-wide">Recursos</th><th class="text-left px-4 py-3 text-[11px] font-semibold text-ink-muted uppercase tracking-wide">Oferta</th><th class="text-left px-4 py-3 text-[11px] font-semibold text-ink-muted uppercase tracking-wide">Validade</th><th class="text-left px-4 py-3 text-[11px] font-semibold text-ink-muted uppercase tracking-wide">Dono</th><th class="text-right px-4 py-3 text-[11px] font-semibold text-ink-muted uppercase tracking-wide">Ações</th></tr></thead><tbody id="emp-tbody"></tbody></table></div>
+          <div id="emp-empty" class="hidden text-center py-16 text-ink-muted"><div class="text-4xl mb-3 opacity-40">🏢</div><p class="text-[14px]">Nenhuma empresa cadastrada.</p></div>
+        </div>
+      </div>
+      <div id="emp-panel-indicacoes" class="hidden">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between mb-4 gap-3">
+          <div class="flex gap-2 flex-wrap">
+          <button onclick="filterSugestoes('01',this)" class="sug-filter-btn bg-yellow-50 text-yellow-700 border border-yellow-200 text-[12px] font-semibold px-3 py-1.5 rounded-lg ring-2 ring-offset-1 ring-primary">⏳ Pendentes</button>
+          <button onclick="filterSugestoes('02',this)" class="sug-filter-btn bg-green-50 text-green-700 border border-green-200 text-[12px] font-semibold px-3 py-1.5 rounded-lg">✓ Aprovadas</button>
+          <button onclick="filterSugestoes('03',this)" class="sug-filter-btn bg-red-50 text-red-600 border border-red-200 text-[12px] font-semibold px-3 py-1.5 rounded-lg">✕ Recusadas</button>
+          <button onclick="filterSugestoes('',this)" class="sug-filter-btn bg-surface-3 text-ink-muted border border-edge text-[12px] font-semibold px-3 py-1.5 rounded-lg">Todas</button>
+          </div>
+          <button onclick="openSugestaoModal()" class="bg-primary hover:bg-primary-hover text-white text-[13px] font-semibold px-4 h-9 rounded-lg transition-colors whitespace-nowrap shrink-0">+ Adicionar</button>
+        </div>
+        <div id="sugestoes-list" class="space-y-3"></div>
+        <div id="sugestoes-empty" class="hidden bg-white rounded-2xl border border-edge text-center py-16 text-ink-muted"><div class="text-4xl mb-3 opacity-40">💡</div><p class="text-[14px]">Nenhuma indicação encontrada.</p></div>
+      </div>
+
+      <div id="emp-panel-solicitacoes" class="hidden">
+        <div class="flex gap-2 mb-4 flex-wrap">
+          <button onclick="filterSolicitacoes('01',this)" class="sol-filter-btn bg-yellow-50 text-yellow-700 border border-yellow-200 text-[12px] font-semibold px-3 py-1.5 rounded-lg ring-2 ring-offset-1 ring-primary">⏳ Pendentes</button>
+          <button onclick="filterSolicitacoes('02',this)" class="sol-filter-btn bg-green-50 text-green-700 border border-green-200 text-[12px] font-semibold px-3 py-1.5 rounded-lg">✓ Aprovadas</button>
+          <button onclick="filterSolicitacoes('03',this)" class="sol-filter-btn bg-red-50 text-red-600 border border-red-200 text-[12px] font-semibold px-3 py-1.5 rounded-lg">✕ Recusadas</button>
+          <button onclick="filterSolicitacoes('',this)" class="sol-filter-btn bg-surface-3 text-ink-muted border border-edge text-[12px] font-semibold px-3 py-1.5 rounded-lg">Todas</button>
+        </div>
+        <div id="solicitacoes-list" class="space-y-3"></div>
+        <div id="solicitacoes-empty" class="hidden bg-white rounded-2xl border border-edge text-center py-16 text-ink-muted"><div class="text-4xl mb-3 opacity-40">👑</div><p class="text-[14px]">Nenhuma solicitação de dono encontrada.</p></div>
+      </div>
+    </div>
+
+    <!-- CLIENTES -->
+    <div id="screen-clientes" class="screen hidden">
+      <div id="cli-panel-lista">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between mb-6 gap-4">
+          <div><h2 class="text-2xl font-bold tracking-tight">Clientes</h2><p class="text-ink-muted">Gerencie todos os usuários cadastrados no sistema.</p></div>
+          <div class="flex flex-col sm:flex-row gap-3 items-stretch sm:items-center">
+            <div class="relative"><input id="search-cli" type="text" placeholder="Buscar cliente..." oninput="renderClientes()" class="field-input w-full sm:w-64 pl-10"><span class="absolute left-4 top-3 opacity-30">🔍</span></div>
+            <button onclick="novoCliente()" class="bg-primary hover:bg-primary-hover text-white font-bold px-6 py-2.5 rounded-xl transition-all shadow-lg shadow-primary/20 whitespace-nowrap">+ Novo Cliente</button>
+          </div>
+        </div>
+        <div class="bg-white rounded-2xl border border-edge shadow-sm overflow-hidden">
+          <table class="w-full text-left">
+            <thead><tr class="bg-slate-50 border-b border-edge"><th class="px-6 py-4 font-bold text-slate-600 text-[12px] uppercase tracking-wide">Nome / Email</th><th class="px-6 py-4 font-bold text-slate-600 text-[12px] uppercase tracking-wide">Contato</th><th class="px-6 py-4 font-bold text-slate-600 text-[12px] uppercase tracking-wide">Nascimento</th><th class="px-6 py-4 font-bold text-slate-600 text-[12px] uppercase tracking-wide">Empresa</th><th class="px-6 py-4 text-right font-bold text-slate-600 text-[12px] uppercase tracking-wide">Ações</th></tr></thead>
+            <tbody id="cli-tbody" class="divide-y divide-edge"></tbody>
+          </table>
+          <div id="cli-empty" class="hidden py-20 text-center text-ink-muted"><div class="text-4xl mb-3 opacity-40">👥</div><p>Nenhum cliente encontrado.</p></div>
+        </div>
+      </div>
+      <div id="cli-panel-perfil" class="hidden">
+        <div class="flex items-center gap-4 mb-8">
+          <button onclick="fecharPerfil()" class="w-10 h-10 rounded-xl border border-edge flex items-center justify-center hover:bg-white transition-all text-lg font-bold">←</button>
+          <div><h2 class="text-2xl font-bold tracking-tight">Perfil do Cliente</h2><p class="text-ink-muted">Editando: <span id="cli-breadcrumb-nome" class="font-bold text-slate-800"></span></p></div>
+        </div>
+        <div class="flex flex-col lg:flex-row gap-8 items-start">
+          <div class="w-full lg:w-80 shrink-0">
+            <div class="bg-gradient-to-br from-blue-600 to-indigo-700 rounded-3xl p-8 text-white shadow-xl relative overflow-hidden">
+              <div class="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -translate-y-10 translate-x-10"></div>
+              <div class="relative z-10">
+                <div id="card-avatar" class="w-20 h-20 rounded-2xl bg-white/20 border-2 border-white/30 flex items-center justify-center text-4xl font-bold mb-6">?</div>
+                <div id="card-nome" class="text-2xl font-bold leading-tight mb-2">Nome do Cliente</div>
+                <div id="card-nasc" class="text-white/70 font-medium mb-6">--/--/----</div>
+                <div class="bg-white/10 rounded-2xl p-4 flex items-center gap-3 border border-white/10">
+                  <span class="text-2xl">🎂</span>
+                  <div><div id="card-bday-status" class="font-bold text-sm">Calculando...</div><div class="text-[10px] text-white/60 uppercase tracking-widest font-bold">Aniversário</div></div>
+                </div>
+              </div>
+            </div>
+            <div class="mt-6 grid grid-cols-2 keep-2col gap-4">
+              <div class="bg-white p-4 rounded-2xl border border-edge text-center shadow-sm"><div id="stat-negocios" class="text-2xl font-bold text-primary">0</div><div class="text-[10px] font-bold text-ink-muted uppercase">Negócios</div></div>
+              <div class="bg-white p-4 rounded-2xl border border-edge text-center shadow-sm"><div id="stat-status" class="text-[11px] font-bold text-green-600 uppercase">Ativo</div><div class="text-[10px] font-bold text-ink-muted uppercase">Status</div></div>
+            </div>
+          </div>
+          <div class="flex-1 w-full space-y-6">
+            <div class="bg-slate-900 rounded-2xl shadow-xl overflow-hidden border border-slate-800">
+              <div class="px-6 py-4 border-b border-slate-800 flex items-center justify-between">
+                <div class="flex items-center gap-2"><span class="text-white font-bold">🔑 Identificadores</span><span class="text-slate-500 text-xs">IDs únicos do sistema</span></div>
+                <div class="flex gap-2">
+                  <button id="btn-bloquear" onclick="toggleBloqueio()" class="px-3 py-1.5 rounded-lg border border-slate-700 text-slate-300 text-xs font-bold hover:bg-slate-800 transition-all">Bloquear</button>
+                  <button onclick="confirmarExclusao()" class="px-3 py-1.5 rounded-lg bg-red-500/10 border border-red-500/20 text-red-400 text-xs font-bold hover:bg-red-500/20 transition-all">Deletar Conta</button>
+                </div>
+              </div>
+              <div class="divide-y divide-slate-800">
+                <div class="px-6 py-4 flex items-center justify-between">
+                  <div class="flex items-center gap-4"><span class="bg-amber-500/20 text-amber-400 px-2 py-1 rounded text-[10px] font-bold mono border border-amber-500/30">MASTER</span><span id="id-master" class="mono text-amber-300 text-sm font-semibold"></span></div>
+                  <button onclick="copiarId('id-master')" class="text-slate-500 hover:text-white text-xs">Copiar</button>
+                </div>
+                <div class="px-6 py-4 flex items-center justify-between">
+                  <div class="flex items-center gap-4"><span class="bg-blue-500/20 text-blue-400 px-2 py-1 rounded text-[10px] font-bold mono border border-blue-500/30">USUARIO</span><span id="id-pessoal" class="mono text-blue-300 text-sm font-semibold"></span></div>
+                  <button onclick="copiarId('id-pessoal')" class="text-slate-500 hover:text-white text-xs">Copiar</button>
+                </div>
+                <div class="px-6 py-4">
+                  <div class="flex items-center gap-2 mb-2"><span class="bg-purple-500/20 text-purple-400 px-2 py-1 rounded text-[10px] font-bold mono border border-purple-500/30">NEGOCIO</span><span id="id-neg-count" class="text-slate-500 text-xs"></span></div>
+                  <div id="id-neg-list" class="space-y-1"></div>
+                </div>
+              </div>
+            </div>
+            <input type="hidden" id="f-id">
+            <div class="bg-white rounded-2xl border border-edge shadow-sm overflow-hidden">
+              <div class="px-6 py-4 border-b border-edge">
+                <div class="flex items-center gap-2 mb-0.5">
+                  <span class="text-base">✏️</span>
+                  <span class="font-bold text-[15px] text-ink">Editar Informações</span>
+                </div>
+                <p class="text-[12px] text-ink-muted">Dados pessoais, contato e endereço</p>
+              </div>
+              <div class="p-6 space-y-6">
+                <div>
+                  <div class="flex items-center gap-2 mb-3">
+                    <div class="w-7 h-7 rounded-lg bg-blue-50 flex items-center justify-center text-sm flex-shrink-0">🪪</div>
+                    <div>
+                      <div class="font-bold text-[13px] text-ink leading-none">Dados Pessoais</div>
+                      <div class="text-[11px] text-ink-muted">Nome e data de nascimento</div>
+                    </div>
+                  </div>
+                  <div class="space-y-3">
+                    <div>
+                      <label class="field-label">Nome Completo <span class="text-primary">*</span></label>
+                      <input id="f-nome" type="text" class="field-input" placeholder="Nome completo" oninput="syncCard()">
+                    </div>
+                    <div class="grid grid-cols-2 gap-3">
+                      <div>
+                        <label class="field-label">Data de Nascimento <span class="text-primary">*</span></label>
+                        <input id="f-nasc" type="date" class="field-input" oninput="syncCard()">
+                      </div>
+                      <div>
+                        <label class="field-label">Empresa Vinculada</label>
+                        <select id="f-emp" class="field-select"><option value="">— Selecionar —</option></select>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="border-t border-edge"></div>
+                <div>
+                  <div class="flex items-center gap-2 mb-3">
+                    <div class="w-7 h-7 rounded-lg bg-green-50 flex items-center justify-center text-sm flex-shrink-0">📱</div>
+                    <div>
+                      <div class="font-bold text-[13px] text-ink leading-none">Contato</div>
+                      <div class="text-[11px] text-ink-muted">Telefone e e-mail (opcionais)</div>
+                    </div>
+                  </div>
+                  <div class="space-y-3">
+                    <div>
+                      <label class="field-label">WhatsApp</label>
+                      <input id="f-tel" type="text" class="field-input" placeholder="(00) 00000-0000" maxlength="15" oninput="maskPhone(event)">
+                    </div>
+                    <div>
+                      <label class="field-label">E-mail</label>
+                      <input id="f-email" type="email" class="field-input" placeholder="exemplo@email.com">
+                    </div>
+                  </div>
+                </div>
+                <div class="border-t border-edge"></div>
+                <div>
+                  <div class="flex items-center gap-2 mb-3">
+                    <div class="w-7 h-7 rounded-lg bg-orange-50 flex items-center justify-center text-sm flex-shrink-0">📍</div>
+                    <div>
+                      <div class="font-bold text-[13px] text-ink leading-none">Endereço</div>
+                      <div class="text-[11px] text-ink-muted">Para encontrar ofertas perto do cliente</div>
+                    </div>
+                  </div>
+                  <div class="space-y-3">
+                    <div>
+                      <label class="field-label">CEP</label>
+                      <input id="f-cep" type="text" class="field-input" placeholder="00000-000" maxlength="9" oninput="maskCEP(event)">
+                    </div>
+                    <div>
+                      <label class="field-label">Rua / Avenida</label>
+                      <input id="f-rua" type="text" class="field-input" placeholder="Ex: Rua das Flores">
+                    </div>
+                    <div class="grid grid-cols-2 gap-3">
+                      <div>
+                        <label class="field-label">Número <span class="text-red-400">*</span></label>
+                        <input id="f-num" type="text" class="field-input" placeholder="Ex: 123">
+                      </div>
+                      <div>
+                        <label class="field-label">Complemento</label>
+                        <input id="f-comp" type="text" class="field-input" placeholder="Apto, Bloco...">
+                      </div>
+                    </div>
+                    <div>
+                      <label class="field-label">Bairro</label>
+                      <input id="f-bairro" type="text" class="field-input" placeholder="Seu bairro">
+                    </div>
+                    <div class="grid grid-cols-2 gap-3">
+                      <div>
+                        <label class="field-label">Cidade</label>
+                        <input id="f-cidade" type="text" class="field-input" placeholder="Sua cidade">
+                      </div>
+                      <div>
+                        <label class="field-label">Estado</label>
+                        <select id="f-uf" class="field-select"><option value="">— UF —</option><option>AC</option><option>AL</option><option>AP</option><option>AM</option><option>BA</option><option>CE</option><option>DF</option><option>ES</option><option>GO</option><option>MA</option><option>MT</option><option>MS</option><option>MG</option><option>PA</option><option>PB</option><option>PR</option><option>PE</option><option>PI</option><option>RJ</option><option>RN</option><option>RS</option><option>RO</option><option>RR</option><option>SC</option><option>SP</option><option>SE</option><option>TO</option></select>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="flex items-center justify-between pt-2">
+                  <button onclick="fecharPerfil()" class="px-6 py-2.5 font-bold text-slate-500 hover:text-slate-800 transition-all border border-edge rounded-xl">← Voltar</button>
+                  <button onclick="salvarClienteInline()" class="bg-primary hover:bg-primary-hover text-white font-bold px-10 py-2.5 rounded-xl shadow-lg shadow-primary/20 transition-all">Salvar ✓</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ANIVERSÁRIOS -->
+    <div id="screen-aniversarios" class="screen hidden">
+      <div class="flex flex-col sm:flex-row sm:items-start justify-between mb-6 gap-4">
+        <div><h2 class="text-xl font-bold tracking-tight mb-1">Aniversários</h2><p class="text-ink-muted text-[13px]">Visualize e gerencie aniversariantes por período.</p></div>
+        <select id="filter-bday" onchange="renderAniversarios()" class="border border-edge rounded-lg px-3 h-9 text-[13px] bg-white focus:outline-none focus:border-primary w-full sm:w-auto"><option value="today">Hoje</option><option value="week">Esta Semana</option><option value="month">Este Mês</option><option value="all">Todos</option></select>
+      </div>
+      <div class="bg-white rounded-2xl border border-edge shadow-sm overflow-hidden">
+        <div class="overflow-x-auto table-scroll"><table class="w-full"><thead><tr class="border-b border-edge"><th class="text-left px-4 py-3 text-[11px] font-semibold text-ink-muted uppercase tracking-wide">Cliente</th><th class="text-left px-4 py-3 text-[11px] font-semibold text-ink-muted uppercase tracking-wide">Aniversário</th><th class="text-left px-4 py-3 text-[11px] font-semibold text-ink-muted uppercase tracking-wide">Empresa</th><th class="text-left px-4 py-3 text-[11px] font-semibold text-ink-muted uppercase tracking-wide">Oferta</th><th class="text-left px-4 py-3 text-[11px] font-semibold text-ink-muted uppercase tracking-wide">Status</th><th class="text-right px-4 py-3 text-[11px] font-semibold text-ink-muted uppercase tracking-wide">Ação</th></tr></thead><tbody id="bday-tbody"></tbody></table></div>
+        <div id="bday-empty" class="hidden text-center py-16 text-ink-muted"><div class="text-4xl mb-3 opacity-40">🎉</div><p class="text-[14px]">Nenhum aniversariante no período.</p></div>
+      </div>
+    </div>
+
+    <!-- MEU PERFIL -->
+    <div id="screen-meuperfil" class="screen hidden">
+      <div class="mb-6">
+        <h2 class="text-2xl font-bold tracking-tight mb-1">Meu Perfil</h2>
+        <p class="text-ink-muted text-[14px]">Mantenha seus dados atualizados.</p>
+      </div>
+      <div class="perfil-layout flex gap-6 items-start" style="flex-wrap:nowrap;">
+        <div class="perfil-sidebar-col" style="width:260px;min-width:220px;flex-shrink:0;display:flex;flex-direction:column;gap:16px;">
+          <div class="bg-gradient-to-br from-primary to-blue-700 rounded-3xl p-5 text-white shadow-lg shadow-primary/30 relative overflow-hidden">
+            <div class="absolute top-0 right-0 w-32 h-32 bg-white/5 rounded-full -translate-y-10 translate-x-10"></div>
+            <div class="relative z-10">
+              <div id="adm-card-avatar" class="w-14 h-14 rounded-2xl bg-white/20 border-2 border-white/30 flex items-center justify-center text-2xl font-bold mb-3 shadow-sm">A</div>
+              <div id="adm-card-nome" class="text-lg font-bold tracking-tight leading-tight mb-0.5">Admin</div>
+              <div id="adm-card-sub" class="text-white/70 text-[12px] font-medium mb-3">Sistema Colaborativo</div>
+              <div class="space-y-2">
+                <div id="adm-card-tel-row" class="hidden flex items-center gap-2 bg-white/15 rounded-xl px-3 py-2">
+                  <span>📱</span>
+                  <div>
+                    <div class="text-[10px] text-white/60 uppercase font-semibold tracking-wide leading-none mb-0.5">WHATSAPP</div>
+                    <div id="adm-card-tel-val" class="text-[13px] font-medium truncate">—</div>
+                  </div>
+                </div>
+                <div id="adm-card-email-row" class="hidden flex items-center gap-2 bg-white/15 rounded-xl px-3 py-2">
+                  <span>✉️</span>
+                  <div>
+                    <div class="text-[10px] text-white/60 uppercase font-semibold tracking-wide leading-none mb-0.5">E-MAIL</div>
+                    <div id="adm-card-email-val" class="text-[12px] font-medium truncate">—</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        <div class="grid grid-cols-2 keep-2col gap-3">
+            <div class="bg-white rounded-2xl border border-edge p-4 text-center shadow-sm"><div id="adm-stat-emp" class="text-2xl font-bold text-primary">0</div><div class="text-[11px] text-ink-muted mt-0.5">Empresas</div></div>
+            <div class="bg-white rounded-2xl border border-edge p-4 text-center shadow-sm"><div id="adm-stat-cli" class="text-2xl font-bold text-blue-600">0</div><div class="text-[11px] text-ink-muted mt-0.5">Clientes</div></div>
+            <div class="bg-white rounded-2xl border border-edge p-4 text-center shadow-sm"><div id="adm-stat-sug" class="text-2xl font-bold text-teal-600">0</div><div class="text-[11px] text-ink-muted mt-0.5">Indicações</div></div>
+            <div class="bg-white rounded-2xl border border-edge p-4 text-center shadow-sm"><div id="adm-stat-verif" class="text-2xl font-bold text-green-600">0</div><div class="text-[11px] text-ink-muted mt-0.5">Verificados</div></div>
+          </div>
+          <div class="bg-white rounded-2xl border border-edge shadow-sm overflow-hidden">
+            <div class="px-4 py-3 border-b border-edge flex items-center gap-2" style="background:#1e293b;">
+              <span class="text-white font-bold text-[12.5px]">🔑 IDs do Sistema</span>
+            </div>
+            <div class="divide-y divide-edge">
+              <div class="px-4 py-3 flex items-center gap-2">
+                <span class="text-[10px] font-bold text-ink bg-surface-3 border border-edge px-2 py-0.5 rounded mono shrink-0">STORAGE</span>
+                <span class="mono text-[11px] text-ink-muted truncate">anivcrm_v2</span>
+              </div>
+              <div class="px-4 py-3 flex items-center gap-2">
+                <span class="text-[10px] font-bold text-blue-700 bg-blue-50 border border-blue-200 px-2 py-0.5 rounded mono shrink-0">VERSÃO</span>
+                <span class="mono text-[11px] text-ink-muted">v2.0</span>
+              </div>
+              <div class="px-4 py-3 flex items-center gap-2">
+                <span class="text-[10px] font-bold text-purple-700 bg-purple-50 border border-purple-200 px-2 py-0.5 rounded mono shrink-0">CIDADE</span>
+                <span id="adm-id-cidade" class="mono text-[11px] text-ink-muted truncate">—</span>
+              </div>
+            </div>
+          </div>
+          <!-- Zona de Perigo -->
+          <div class="bg-white rounded-2xl border border-red-100 shadow-sm overflow-hidden">
+            <div class="px-4 py-3.5 border-b border-red-100 flex items-center gap-2">
+              <span>⚠️</span>
+              <div class="text-[13px] font-bold text-red-600 leading-none">Zona de Perigo</div>
+            </div>
+            <div class="p-4">
+              <p class="text-[12px] text-ink-muted mb-3">Limpar todos os dados permanentemente. <strong>Não pode ser desfeito.</strong></p>
+              <button onclick="limparTudo()" class="w-full bg-white hover:bg-red-50 text-red-600 border border-red-200 text-[12.5px] font-semibold py-2 rounded-lg transition-colors">🗑 Limpar Todos os Dados</button>
+            </div>
+          </div>
+        </div>
+        <div class="flex-1 min-w-0">
+          <div class="bg-white rounded-2xl border border-edge shadow-sm overflow-hidden">
+            <div class="px-6 py-4 border-b border-edge">
+              <div class="flex items-center gap-2 mb-0.5">
+                <span class="text-base">✏️</span>
+                <span class="font-bold text-[15px] text-ink">Editar Informações</span>
+              </div>
+              <p class="text-[12px] text-ink-muted">Dados do sistema, contato e endereço do administrador</p>
+            </div>
+            <div class="p-6 space-y-6">
+              <div>
+                <div class="flex items-center gap-2 mb-3">
+                  <div class="w-7 h-7 rounded-lg bg-blue-50 flex items-center justify-center text-sm flex-shrink-0">⚙️</div>
+                  <div>
+                    <div class="font-bold text-[13px] text-ink leading-none">Sistema</div>
+                    <div class="text-[11px] text-ink-muted">Identificação do AnivCRM</div>
+                  </div>
+                </div>
+                <div class="space-y-3">
+                  <div>
+                    <label class="field-label">Nome do Sistema / Organização</label>
+                    <input id="adm-cfg-nome" type="text" placeholder="Ex: AnivCRM" oninput="atualizarCardAdmin()" class="field-input">
+                  </div>
+                  <div class="grid grid-cols-2 gap-3">
+                    <div>
+                      <label class="field-label">Cidade Principal</label>
+                      <input id="adm-cfg-cidade" type="text" placeholder="Ex: Goiânia" oninput="atualizarCardAdmin()" class="field-input">
+                    </div>
+                    <div>
+                      <label class="field-label">Estado (UF)</label>
+                      <select id="adm-cfg-uf" onchange="atualizarCardAdmin()" class="field-select">
+                        <option value="">— UF —</option>
+                        <option>AC</option><option>AL</option><option>AP</option><option>AM</option><option>BA</option><option>CE</option><option>DF</option><option>ES</option><option>GO</option><option>MA</option><option>MT</option><option>MS</option><option>MG</option><option>PA</option><option>PB</option><option>PR</option><option>PE</option><option>PI</option><option>RJ</option><option>RN</option><option>RS</option><option>RO</option><option>RR</option><option>SC</option><option>SP</option><option>SE</option><option>TO</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="border-t border-edge"></div>
+              <div>
+                <div class="flex items-center gap-2 mb-3">
+                  <div class="w-7 h-7 rounded-lg bg-purple-50 flex items-center justify-center text-sm flex-shrink-0">👤</div>
+                  <div>
+                    <div class="font-bold text-[13px] text-ink leading-none">Dados do Admin</div>
+                    <div class="text-[11px] text-ink-muted">Nome e contato</div>
+                  </div>
+                </div>
+                <div class="space-y-3">
+                  <div>
+                    <label class="field-label">Nome Completo <span class="text-primary">*</span></label>
+                    <input id="adm-cfg-admnome" type="text" placeholder="Seu nome" oninput="atualizarCardAdmin()" class="field-input">
+                  </div>
+                  <div>
+                    <label class="field-label">WhatsApp</label>
+                    <input id="adm-cfg-tel" type="text" placeholder="(00) 00000-0000" maxlength="15" oninput="maskPhone(event);atualizarCardAdmin()" class="field-input">
+                  </div>
+                  <div>
+                    <label class="field-label">E-mail</label>
+                    <input id="adm-cfg-email" type="email" placeholder="admin@email.com" oninput="atualizarCardAdmin()" class="field-input">
+                  </div>
+                </div>
+              </div>
+              <div class="border-t border-edge"></div>
+              <div>
+                <div class="flex items-center gap-2 mb-3">
+                  <div class="w-7 h-7 rounded-lg bg-orange-50 flex items-center justify-center text-sm flex-shrink-0">📍</div>
+                  <div>
+                    <div class="font-bold text-[13px] text-ink leading-none">Endereço</div>
+                    <div class="text-[11px] text-ink-muted">Localização principal do negócio</div>
+                  </div>
+                </div>
+                <div class="space-y-3">
+                  <div>
+                    <label class="field-label">CEP</label>
+                    <input id="adm-cfg-cep" type="text" placeholder="00000-000" maxlength="9" oninput="maskCEP(event)" class="field-input">
+                  </div>
+                  <div>
+                    <label class="field-label">Rua / Avenida</label>
+                    <input id="adm-cfg-rua" type="text" placeholder="Ex: Rua das Flores" class="field-input">
+                  </div>
+                  <div class="grid grid-cols-2 gap-3">
+                    <div>
+                      <label class="field-label">Número</label>
+                      <input id="adm-cfg-num" type="text" placeholder="Ex: 123" class="field-input">
+                    </div>
+                    <div>
+                      <label class="field-label">Complemento</label>
+                      <input id="adm-cfg-comp" type="text" placeholder="Apto, Bloco..." class="field-input">
+                    </div>
+                  </div>
+                  <div>
+                    <label class="field-label">Bairro</label>
+                    <input id="adm-cfg-bairro" type="text" placeholder="Seu bairro" class="field-input">
+                  </div>
+                </div>
+              </div>
+              <div class="flex justify-end pt-2">
+                <button onclick="salvarConfiguracoes()" class="bg-primary hover:bg-primary-hover text-white font-bold px-8 h-10 rounded-xl transition-colors shadow-sm shadow-primary/30 text-[14px]">Salvar ✓</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</main>
+</div>
+
+<!-- MODAL EMPRESA -->
+<div class="modal-overlay" id="modal-emp">
+  <div class="modal-form-box">
+    <div class="modal-full-header">
+      <div class="modal-full-header-inner">
+        <div class="w-8"></div>
+        <div class="text-center flex-1">
+          <span id="emp-modal-title" class="font-bold text-[15px] text-ink block leading-tight">Nova Empresa</span>
+          <div class="flex gap-2 mt-2.5 max-w-[160px] mx-auto">
+            <div class="p-prog-dot" id="e-dot-1" style="background:#2563eb;"></div>
+            <div class="p-prog-dot" id="e-dot-2" style="background:#e2e8f0;"></div>
+            <div class="p-prog-dot" id="e-dot-3" style="background:#e2e8f0;"></div>
+            <div class="p-prog-dot" id="e-dot-4" style="background:#e2e8f0;"></div>
+            <div class="p-prog-dot" id="e-dot-5" style="background:#e2e8f0;"></div>
+            <div class="p-prog-dot" id="e-dot-6" style="background:#e2e8f0;"></div>
+          </div>
+          <p id="e-step-label" class="text-[10px] text-ink-muted font-semibold mt-1 uppercase tracking-wider">Etapa 1 de 6</p>
+        </div>
+        <button onclick="closeModal('modal-emp')" class="w-8 h-8 rounded-lg border border-edge hover:bg-surface-3 text-ink-muted flex items-center justify-center transition-colors text-[15px]">✕</button>
+      </div>
+    </div>
+    <div class="modal-full-body">
+      <input type="hidden" id="e-id">
+      <div class="n-step active" id="e-step-1">
+        <div class="modal-section">
+          <div class="modal-section-header">
+            <div class="section-icon bg-purple-50">👑</div>
+            <div><p class="font-bold text-[14px] text-ink leading-none">Dono da Empresa</p><p class="text-[12px] text-ink-muted mt-0.5">Vínculo com cliente e status do perfil</p></div>
+          </div>
+          <div class="modal-section-body">
+            <div id="emp-dono-atual" class="hidden mb-4 rounded-xl border border-purple-200 bg-purple-50/60 overflow-hidden">
+              <div class="px-4 py-3 flex items-center justify-between gap-3">
+                <div class="flex items-center gap-3 min-w-0">
+                  <div id="emp-dono-avatar" class="w-9 h-9 rounded-xl bg-purple-100 border border-purple-300 flex items-center justify-center text-[15px] font-bold text-purple-700 shrink-0"></div>
+                  <div class="min-w-0">
+                    <div class="flex items-center gap-2 flex-wrap">
+                      <span class="text-[10px] font-bold text-purple-500 mono bg-white border border-purple-200 px-1.5 py-0.5 rounded">ID_MASTER</span>
+                      <span id="emp-dono-master-id" class="mono text-[10.5px] text-purple-600 truncate"></span>
+                    </div>
+                    <p id="emp-dono-nome" class="text-[13px] font-bold text-ink mt-0.5"></p>
+                    <p id="emp-dono-contato" class="text-[11.5px] text-ink-muted mono"></p>
+                  </div>
+                </div>
+                <button type="button" onclick="desvincularDonoModal()" class="shrink-0 text-[11.5px] font-semibold text-red-600 border border-red-200 bg-white hover:bg-red-50 rounded-lg px-3 py-1.5 transition-colors">↩ Desvincular</button>
+              </div>
+            </div>
+            <div id="emp-dono-vazio" class="hidden mb-4 rounded-xl border border-dashed border-edge bg-surface-2 px-4 py-3 text-[12.5px] text-ink-muted italic">Sem dono vinculado — esta empresa é da Comunidade.</div>
+            <div class="mb-4">
+              <label class="field-label">🔍 Vincular dono <span class="font-normal text-ink-muted">(buscar por nome, email ou tel)</span></label>
+              <input id="emp-dono-busca" type="text" placeholder="Digite o nome ou contato do cliente..." oninput="buscarDonoEmp(this.value)" class="field-input">
+              <div id="emp-dono-resultados" class="hidden mt-1.5 bg-white border border-edge rounded-xl shadow-lg overflow-hidden max-h-44 overflow-y-auto"></div>
+              <input type="hidden" id="emp-dono-id-selecionado">
+            </div>
+            <div>
+              <label class="field-label">Status do Perfil</label>
+              <select id="e-status-perfil" class="field-select">
+                <option value="comunidade">🤝 Colaborativo (Comunidade)</option>
+                <option value="verificado">🛡️ Verificado (Dono Oficial)</option>
+              </select>
+              <p class="text-[11px] text-ink-muted mt-1.5 italic">Use "Verificado" quando o dono comprovar a posse do estabelecimento.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="n-step" id="e-step-2">
+        <div class="modal-section">
+          <div class="modal-section-header">
+            <div class="section-icon bg-slate-100">📋</div>
+            <div><p class="font-bold text-[14px] text-ink leading-none">Dados Gerais</p><p class="text-[12px] text-ink-muted mt-0.5">Nome, segmento e contato</p></div>
+          </div>
+          <div class="modal-section-body">
+            <div class="grid grid-cols-1 gap-4">
+              <div><label class="field-label">Nome da Empresa <span class="req text-primary">*</span></label><input id="e-nome" type="text" placeholder="Ex: Restaurante Bella Vista" class="field-input"></div>
+              <div class="grid grid-cols-2 gap-4">
+                <div><label class="field-label">Segmento</label><input id="e-segmento" type="text" placeholder="Bar, Restaurante, Pizzaria..." class="field-input"></div>
+                <div><label class="field-label">Telefone / WhatsApp</label><input id="e-tel" type="text" placeholder="(62) 9 9999-9999" class="field-input"></div>
+                <div><label class="field-label">Email</label><input id="e-email" type="email" placeholder="contato@empresa.com" class="field-input"></div>
+                <div><label class="field-label">Instagram</label><div class="relative"><span class="absolute left-4 top-3 text-[13px] text-ink-muted font-bold">@</span><input id="e-ig" type="text" placeholder="nome_do_perfil" class="field-input pl-8"></div></div>
+                <div><label class="field-label">Site</label><input id="e-site" type="url" placeholder="https://www.seusite.com.br" class="field-input"></div>
+                <div><label class="field-label">Cardápio Digital</label><input id="e-cardapio" type="url" placeholder="Link do iFood, Drive, etc." class="field-input"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="n-step" id="e-step-3">
+        <div class="modal-section">
+          <div class="modal-section-header">
+            <div class="section-icon bg-green-50">📍</div>
+            <div><p class="font-bold text-[14px] text-ink leading-none">Endereço</p><p class="text-[12px] text-ink-muted mt-0.5">Localização do estabelecimento</p></div>
+          </div>
+          <div class="modal-section-body">
+            <div class="grid grid-cols-1 gap-4">
+              <div><label class="field-label">Rua / Avenida</label><input id="e-rua" type="text" placeholder="Ex: Av. T-7" class="field-input"></div>
+              <div class="grid grid-cols-2 gap-4">
+                <div><label class="field-label">Número</label><input id="e-num" type="text" placeholder="1500" class="field-input"></div>
+                <div><label class="field-label">Complemento</label><input id="e-comp" type="text" placeholder="Sala 3, Bloco B" class="field-input"></div>
+                <div><label class="field-label">Bairro</label><input id="e-bairro" type="text" placeholder="Setor Bueno" class="field-input"></div>
+                <div><label class="field-label">CEP</label><input id="e-cep" type="text" placeholder="00000-000" maxlength="9" oninput="maskCEP(event)" class="field-input"></div>
+                <div><label class="field-label">Cidade</label><input id="e-cidade" type="text" placeholder="Goiânia" class="field-input"></div>
+                <div><label class="field-label">Estado</label><select id="e-uf" class="field-select"><option value="">— UF —</option><option>AC</option><option>AL</option><option>AP</option><option>AM</option><option>BA</option><option>CE</option><option>DF</option><option>ES</option><option>GO</option><option>MA</option><option>MT</option><option>MS</option><option>MG</option><option>PA</option><option>PB</option><option>PR</option><option>PE</option><option>PI</option><option>RJ</option><option>RN</option><option>RS</option><option>RO</option><option>RR</option><option>SC</option><option>SP</option><option>SE</option><option>TO</option></select></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="n-step" id="e-step-4">
+        <div class="modal-section">
+          <div class="modal-section-header">
+            <div class="section-icon bg-blue-50">🕐</div>
+            <div><p class="font-bold text-[14px] text-ink leading-none">Horário de Funcionamento</p><p class="text-[12px] text-ink-muted mt-0.5">Ative "Tem HH" para definir o happy hour</p></div>
+          </div>
+          <div class="modal-section-body" style="padding:16px;">
+            <div id="e-sched-container"></div>
+          </div>
+        </div>
+        <div id="hh-desc-wrap" class="hidden">
+          <div class="modal-section mt-3">
+            <div class="modal-section-header">
+              <div class="section-icon bg-yellow-50">🍺</div>
+              <div><p class="font-bold text-[14px] text-ink leading-none">Descrição do Happy Hour</p><p class="text-[12px] text-ink-muted mt-0.5">O que entra no happy hour</p></div>
+            </div>
+            <div class="modal-section-body">
+              <textarea id="e-hh-desc" rows="3" placeholder="Ex: Cervejas artesanais 30% off, drinks especiais, porções com preço reduzido..." class="field-textarea"></textarea>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="n-step" id="e-step-5">
+        <div class="modal-section">
+          <div class="modal-section-header">
+            <div class="section-icon bg-pink-50">🎂</div>
+            <div><p class="font-bold text-[14px] text-ink leading-none">Oferta de Aniversário</p><p class="text-[12px] text-ink-muted mt-0.5">O que o aniversariante ganha</p></div>
+          </div>
+          <div class="modal-section-body">
+            <div class="grid grid-cols-2 gap-4">
+              <div><label class="field-label">Tipo de Oferta</label><select id="e-oferta-tipo" onchange="updateOfertaPreview()" class="field-select"><option>Produto/Brinde Grátis</option><option>Desconto Percentual</option><option>Cupom de Valor Fixo</option><option>Pontos de Fidelidade</option><option>Outro</option></select></div>
+              <div><label class="field-label">Validade do Benefício</label><select id="e-oferta-val" class="field-select"><option value="No dia do aniversário">Somente no dia do aniversário</option><option value="Na semana do aniversário">Durante a semana do aniversário</option><option value="No mês do aniversário">Durante o mês do aniversário</option></select></div>
+              <div class="col-span-2"><label class="field-label">Destaque <span class="req text-primary">*</span></label><input id="e-oferta-desc" type="text" oninput="updateOfertaPreview()" placeholder="Ex: Dobradinha de Chopp" class="field-input"><p class="text-[11px] text-ink-muted mt-1.5">Nome curto — aparece em destaque para quem busca.</p></div>
+              <div class="col-span-2"><label class="field-label">Descrição</label><textarea id="e-oferta-detalhe" rows="2" placeholder="Ex: Dobradinha de Chopp 500ml, com direito a torresmo e batata frita." class="field-textarea"></textarea></div>
+              <div class="col-span-2"><label class="field-label">Regras do Benefício</label><textarea id="e-oferta-regras" rows="2" placeholder="Ex: Traga 10 pessoas. Válido somente no dia. Apresentar documento com foto." class="field-textarea"></textarea></div>
+            </div>
+            <div id="oferta-preview" class="hidden mt-3 bg-primary-light border border-primary-border rounded-lg px-4 py-2.5 text-[12.5px] text-primary font-medium">🎁 <span id="oferta-preview-txt"></span></div>
+          </div>
+        </div>
+      </div>
+      <div class="n-step" id="e-step-6">
+        <div class="modal-section">
+          <div class="modal-section-header">
+            <div class="section-icon bg-indigo-50">✨</div>
+            <div><p class="font-bold text-[14px] text-ink leading-none">Recursos e Facilidades</p><p class="text-[12px] text-ink-muted mt-0.5">Diferenciais que o local oferece</p></div>
+          </div>
+          <div class="modal-section-body">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <label class="flex items-center gap-3 p-3 rounded-xl border border-edge hover:bg-surface-2 cursor-pointer transition-colors">
+                <input type="checkbox" id="e-estacionamento" class="accent-primary w-4 h-4">
+                <div class="flex items-center gap-2">
+                  <span class="text-lg">🚗</span>
+                  <span class="text-[13px] font-semibold">Estacionamento</span>
+                </div>
+              </label>
+              <label class="flex items-center gap-3 p-3 rounded-xl border border-edge hover:bg-surface-2 cursor-pointer transition-colors">
+                <input type="checkbox" id="e-brinquedoteca" class="accent-primary w-4 h-4">
+                <div class="flex items-center gap-2">
+                  <span class="text-lg">🧸</span>
+                  <span class="text-[13px] font-semibold">Brinquedoteca</span>
+                </div>
+              </label>
+              <label class="flex items-center gap-3 p-3 rounded-xl border border-edge hover:bg-surface-2 cursor-pointer transition-colors">
+                <input type="checkbox" id="e-comida-vegana" class="accent-primary w-4 h-4">
+                <div class="flex items-center gap-2">
+                  <span class="text-lg">🌱</span>
+                  <span class="text-[13px] font-semibold">Comida Vegana</span>
+                </div>
+              </label>
+              <label class="flex items-center gap-3 p-3 rounded-xl border border-edge hover:bg-surface-2 cursor-pointer transition-colors">
+                <input type="checkbox" id="e-cadeirinha" class="accent-primary w-4 h-4">
+                <div class="flex items-center gap-2">
+                  <span class="text-lg">🪑</span>
+                  <span class="text-[13px] font-semibold">Cadeirinha p/ Criança</span>
+                </div>
+              </label>
+              <label class="flex items-center gap-3 p-3 rounded-xl border border-edge hover:bg-surface-2 cursor-pointer transition-colors">
+                <input type="checkbox" id="e-delivery" class="accent-primary w-4 h-4">
+                <div class="flex items-center gap-2">
+                  <span class="text-lg">🛵</span>
+                  <span class="text-[13px] font-semibold">Delivery</span>
+                </div>
+              </label>
+            </div>
+            <p class="text-[11px] text-ink-muted mt-4 italic">Essas informações ajudam o cliente a escolher o melhor local.</p>
+          </div>
+        </div>
+      </div>
+      <div class="flex items-center justify-between">
+        <button type="button" id="e-prev-btn" onclick="eStep(-1)" class="hidden text-[13px] font-bold text-ink-muted hover:text-ink transition-colors px-2">← Voltar</button>
+        <button type="button" id="e-next-btn" onclick="eStep(1)" class="ml-auto bg-primary hover:bg-primary-hover text-white text-[13.5px] font-bold px-7 h-10 rounded-xl transition-colors shadow-sm shadow-primary/30">Próximo →</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL SUGESTÃO -->
+<div class="modal-overlay" id="modal-sug">
+ <div class="modal-form-box">
+  <div class="modal-full-header">
+    <div class="modal-full-header-inner">
+      <div class="w-8"></div>
+      <div class="text-center flex-1">
+        <span id="sug-modal-title" class="font-bold text-[15px] text-ink block leading-tight">Analisar Sugestão</span>
+        <p id="sug-modal-origem" class="hidden text-[11.5px] text-primary font-semibold mt-0.5"></p>
+        <div class="flex gap-2 mt-2.5 max-w-[160px] mx-auto">
+          <div class="p-prog-dot" id="sg-dot-1" style="background:#2563eb;"></div>
+          <div class="p-prog-dot" id="sg-dot-2" style="background:#e2e8f0;"></div>
+          <div class="p-prog-dot" id="sg-dot-3" style="background:#e2e8f0;"></div>
+          <div class="p-prog-dot" id="sg-dot-4" style="background:#e2e8f0;"></div>
+        </div>
+        <p id="sg-step-label" class="text-[10px] text-ink-muted font-semibold mt-1 uppercase tracking-wider">Etapa 1 de 4</p>
+      </div>
+      <button onclick="closeModal('modal-sug')" class="w-8 h-8 rounded-lg border border-edge hover:bg-surface-3 text-ink-muted flex items-center justify-center transition-colors text-[15px]">✕</button>
+    </div>
+  </div>
+  <div class="modal-full-body">
+    <input type="hidden" id="sug-id">
+    <input type="hidden" id="sug-autor-id">
+    <div class="n-step active" id="sg-step-1">
+      <div id="sug-autor-wrap" class="hidden rounded-2xl border overflow-hidden">
+        <div id="sug-autor-header" class="px-4 py-3 flex items-center gap-3">
+          <div id="sug-autor-avatar" class="w-9 h-9 rounded-xl flex items-center justify-center text-base font-bold shrink-0 bg-primary-light text-primary border border-primary-border"></div>
+          <div class="flex-1 min-w-0">
+            <div class="flex items-center gap-2 flex-wrap">
+              <p id="sug-autor-nome" class="text-[13.5px] font-bold text-ink leading-none"></p>
+              <span id="sug-autor-tipo-badge" class="text-[10px] font-bold px-2 py-0.5 rounded-full"></span>
+            </div>
+            <p id="sug-autor-contato" class="text-[11.5px] text-ink-muted mono mt-0.5"></p>
+          </div>
+          <div class="text-right shrink-0">
+            <p class="text-[10px] text-ink-muted uppercase tracking-wider font-semibold">ID Master</p>
+            <p id="sug-autor-master-id" class="mono text-[10.5px] text-ink-muted"></p>
+          </div>
+        </div>
+        <div id="sug-autor-empresas-wrap" class="hidden border-t border-purple-100 bg-purple-50/40 px-4 py-3">
+          <p class="text-[11px] font-bold text-purple-700 uppercase tracking-wider mb-2">🏢 Empresas já vinculadas a este Master</p>
+          <div id="sug-autor-empresas-list" class="space-y-1.5"></div>
+        </div>
+        <div id="sug-autor-indicacoes-wrap" class="hidden border-t border-edge px-4 py-3">
+          <p class="text-[11px] font-bold text-ink-muted uppercase tracking-wider mb-2">💡 Indicações feitas por esta conta</p>
+          <div id="sug-autor-indicacoes-list" class="space-y-1"></div>
+        </div>
+      </div>
+      <div class="modal-section">
+        <div class="modal-section-header">
+          <div class="section-icon bg-slate-100">📋</div>
+          <div><p class="font-bold text-[14px] text-ink leading-none">Dados do Estabelecimento</p><p class="text-[12px] text-ink-muted mt-0.5">Nome, contato e redes sociais</p></div>
+        </div>
+        <div class="modal-section-body">
+          <div class="grid grid-cols-2 gap-4">
+            <div class="col-span-2"><label class="field-label">Nome da Empresa <span class="req text-primary">*</span></label><input id="sug-nome" type="text" placeholder="Nome do estabelecimento" class="field-input"></div>
+            <div><label class="field-label">Telefone</label><input id="sug-tel" type="text" placeholder="(62) 9 9999-9999" class="field-input"></div>
+            <div><label class="field-label">Segmento</label><input id="sug-segmento" type="text" placeholder="Ex: Restaurante, Bar..." class="field-input"></div>
+            <div><label class="field-label">Email</label><input id="sug-email" type="email" placeholder="contato@empresa.com" class="field-input"></div>
+            <div><label class="field-label">Instagram</label><div class="relative"><span class="absolute left-4 top-3 text-[13px] text-ink-muted font-bold">@</span><input id="sug-ig" type="text" placeholder="perfil" class="field-input pl-8"></div></div>
+            <div><label class="field-label">Site</label><input id="sug-site" type="url" class="field-input"></div>
+            <div><label class="field-label">Cardápio (link)</label><input id="sug-cardapio" type="url" class="field-input"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="n-step" id="sg-step-2">
+      <div class="modal-section">
+        <div class="modal-section-header">
+          <div class="section-icon bg-green-50">📍</div>
+          <div><p class="font-bold text-[14px] text-ink leading-none">Endereço</p><p class="text-[12px] text-ink-muted mt-0.5">Localização do estabelecimento</p></div>
+        </div>
+        <div class="modal-section-body">
+          <div class="grid grid-cols-2 gap-4">
+            <div class="col-span-2"><label class="field-label">Rua / Avenida</label><input id="sug-rua" type="text" placeholder="Rua / Avenida" class="field-input"></div>
+            <div><label class="field-label">Número</label><input id="sug-num" type="text" placeholder="Número" class="field-input"></div>
+            <div><label class="field-label">Bairro</label><input id="sug-bairro" type="text" placeholder="Bairro" class="field-input"></div>
+            <div><label class="field-label">CEP</label><input id="sug-cep" type="text" placeholder="00000-000" maxlength="9" oninput="maskCEP(event)" class="field-input"></div>
+            <div><label class="field-label">Cidade</label><input id="sug-cidade" type="text" placeholder="Cidade" class="field-input"></div>
+            <div class="col-span-2"><label class="field-label">Estado</label><select id="sug-uf" class="field-select"><option value="">— UF —</option><option>AC</option><option>AL</option><option>AP</option><option>AM</option><option>BA</option><option>CE</option><option>DF</option><option>ES</option><option>GO</option><option>MA</option><option>MT</option><option>MS</option><option>MG</option><option>PA</option><option>PB</option><option>PR</option><option>PE</option><option>PI</option><option>RJ</option><option>RN</option><option>RS</option><option>RO</option><option>RR</option><option>SC</option><option>SP</option><option>SE</option><option>TO</option></select></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="n-step" id="sg-step-3">
+      <div class="modal-section">
+        <div class="modal-section-header">
+          <div class="section-icon bg-pink-50">🎂</div>
+          <div><p class="font-bold text-[14px] text-ink leading-none">Oferta de Aniversário</p><p class="text-[12px] text-ink-muted mt-0.5">O que o aniversariante ganha</p></div>
+        </div>
+        <div class="modal-section-body">
+          <div class="grid grid-cols-2 gap-4">
+            <div><label class="field-label">Tipo</label><select id="sug-oferta-tipo" class="field-select"><option>Produto/Brinde Grátis</option><option>Desconto Percentual</option><option>Cupom de Valor Fixo</option><option>Pontos de Fidelidade</option><option>Outro</option></select></div>
+            <div><label class="field-label">Validade</label><select id="sug-oferta-val" class="field-select"><option value="No dia do aniversário">No dia do aniversário</option><option value="Na semana do aniversário">Na semana do aniversário</option><option value="No mês do aniversário">No mês do aniversário</option></select></div>
+            <div class="col-span-2"><label class="field-label">Descrição da Oferta</label><input id="sug-oferta-desc" type="text" placeholder="Ex: 20% de desconto na conta" class="field-input"></div>
+            <div class="col-span-2"><label class="field-label">Regras</label><textarea id="sug-oferta-regras" rows="3" placeholder="Regras e condições..." class="field-textarea"></textarea></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="n-step" id="sg-step-4">
+      <div class="modal-section">
+        <div class="modal-section-header">
+          <div class="section-icon bg-blue-50">⚙️</div>
+          <div><p class="font-bold text-[14px] text-ink leading-none">Revisão e Status</p><p class="text-[12px] text-ink-muted mt-0.5">Observações e decisão sobre a sugestão</p></div>
+        </div>
+        <div class="modal-section-body">
+          <div class="flex flex-col gap-4">
+            <div><label class="field-label">Observações</label><textarea id="sug-obs" rows="2" placeholder="Motivo da sugestão, notas internas..." class="field-textarea"></textarea></div>
+            <div class="p-3.5 bg-surface-2 rounded-xl border border-edge">
+              <label class="flex items-start gap-2.5 cursor-pointer">
+                <input type="checkbox" id="sug-is-dono" class="accent-primary w-4 h-4 mt-0.5" onchange="toggleSugStatus()">
+                <div>
+                  <span class="block text-[13px] font-bold text-ink">É o proprietário / representante legal</span>
+                  <span class="block text-[11.5px] text-ink-muted leading-tight mt-0.5">Ao aprovar, a empresa será vinculada automaticamente ao perfil deste usuário.</span>
+                </div>
+              </label>
+            </div>
+            <div>
+              <label class="field-label">Status</label>
+              <select id="sug-status" onchange="toggleSugStatus()" class="field-select">
+                <option value="01">⏳ Pendente (aguardando análise)</option>
+                <option value="02">✓ Aprovado</option>
+                <option value="03">✕ Recusado</option>
+              </select>
+            </div>
+            <div id="sug-aprovado-action" class="hidden rounded-xl p-4 border">
+              <p id="sug-aprovado-msg" class="text-[13px] font-semibold mb-2"></p>
+              <label class="flex items-center gap-2 cursor-pointer text-[13px]" id="sug-criar-label">
+                <input type="checkbox" id="sug-criar-empresa" class="accent-primary" checked>
+                <span id="sug-criar-empresa-label">Confirmar</span>
+              </label>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="flex items-center justify-between">
+      <button type="button" id="sg-prev-btn" onclick="sgStep(-1)" class="hidden text-[13px] font-bold text-ink-muted hover:text-ink transition-colors px-2">← Voltar</button>
+      <button type="button" id="sg-next-btn" onclick="sgStep(1)" class="ml-auto bg-primary hover:bg-primary-hover text-white text-[13.5px] font-bold px-7 h-10 rounded-xl transition-colors shadow-sm shadow-primary/30">Próximo →</button>
+    </div>
+  </div>
+ </div>
+</div>
+
+<!-- MODAL CONFIRM -->
+<div class="modal-overlay" id="modal-confirm">
+  <div class="modal-box bg-white rounded-2xl shadow-2xl w-full max-w-sm">
+    <div class="flex items-center justify-between px-6 py-5 border-b border-edge"><span id="confirm-title" class="font-bold text-[15px]">Confirmar</span><button onclick="closeModal('modal-confirm')" class="w-7 h-7 rounded-md border border-edge hover:bg-surface-3 text-ink-muted flex items-center justify-center transition-colors">✕</button></div>
+    <div class="px-6 py-5"><p id="confirm-msg" class="text-[14px] text-ink-muted leading-relaxed"></p></div>
+    <div class="px-6 py-4 border-t border-edge flex justify-end gap-3">
+      <button onclick="closeModal('modal-confirm')" class="px-5 py-2 border border-edge rounded-lg text-[13px] font-semibold hover:bg-surface-3 transition-colors">Cancelar</button>
+      <button id="confirm-ok" class="px-5 py-2 bg-red-50 hover:bg-red-100 text-red-600 border border-red-200 rounded-lg text-[13px] font-semibold transition-colors">Confirmar</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOASTS -->
+<div id="toast-wrap" class="fixed bottom-6 right-6 z-[9999] flex flex-col gap-2"></div>
+
+<script src="db-bridge.js"></script>
+<script src="scripts.js"></script>
+<script>
+function toggleSidebar() {
+  const s = document.getElementById("main-sidebar");
+  const o = document.getElementById("sidebar-overlay");
+  s.classList.toggle("open");
+  o.classList.toggle("open");
+}
+function closeSidebar() {
+  document.getElementById("main-sidebar").classList.remove("open");
+  document.getElementById("sidebar-overlay").classList.remove("open");
+}
+document.addEventListener("DOMContentLoaded", function() {
+  // Proteção de rota: redireciona para acessos.html se não logado
+  if (window.requireAuth && !window.requireAuth()) return;
+  function checkMobile() {
+    const logoBtn = document.getElementById("app-logo-btn");
+    const titleEl = document.getElementById("topbar-title");
+    if (window.innerWidth <= 768) {
+      if (logoBtn) logoBtn.style.display = "flex";
+      if (titleEl) titleEl.style.display = "none";
+    } else {
+      if (logoBtn) logoBtn.style.display = "none";
+      if (titleEl) titleEl.style.display = "block";
+    }
+  }
+  checkMobile();
+  window.addEventListener("resize", checkMobile);
+  document.querySelectorAll(".nav-btn").forEach(function(btn) {
+    btn.addEventListener("click", function() {
+      if (window.innerWidth <= 768) closeSidebar();
+    });
+  });
+});
+</script>
+<script src="distancia-patch.js"></script>
+</body>
+</html>

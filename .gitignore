@@ -1,0 +1,16 @@
+﻿# Ignore local and build artifacts
+Thumbs.db
+desktop.ini
+.DS_Store
+node_modules/
+dist/
+*.log
+*.tmp
+*.temp
+.cache/
+.git-backup/
+
+# Ignore local database files
+*.db
+*.db-shm
+*.db-wal

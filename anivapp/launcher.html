@@ -1,0 +1,613 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+  <title>Iniciador — AnivCRM</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; }
+    html, body { overflow-x: hidden; width: 100%; overflow-y: auto !important; min-height: 100vh; min-height: 100dvh; margin: 0; padding: 0; -webkit-overflow-scrolling: touch; }
+    body { font-family: 'DM Sans', sans-serif; background: #f1f5f9; padding: 16px 12px 40px 12px; }
+    .mono { font-family: 'DM Mono', monospace; }
+    .card { background:#fff; border:1px solid #e2e8f0; border-radius:16px; padding:20px; margin-bottom:14px; box-shadow:0 2px 8px rgba(0,0,0,.06); }
+    .btn { border:none; cursor:pointer; font-family:inherit; font-weight:700; border-radius:10px; padding:13px 16px; font-size:14px; transition:all .15s; display:inline-flex; align-items:center; justify-content:center; gap:7px; min-height:48px; width:100%; touch-action:manipulation; -webkit-tap-highlight-color:transparent; }
+    .btn:active { opacity:.82; transform:scale(.98); }
+    .btn:disabled { opacity:.5; cursor:not-allowed; }
+    .btn-danger  { background:linear-gradient(135deg,#ef4444,#dc2626); color:#fff; }
+    .btn-dark    { background:linear-gradient(135deg,#334155,#1e293b); color:#fff; }
+    .btn-blue    { background:linear-gradient(135deg,#2563eb,#1d4ed8); color:#fff; }
+    .btn-green   { background:linear-gradient(135deg,#16a34a,#15803d); color:#fff; }
+    .btn-purple  { background:linear-gradient(135deg,#7c3aed,#6d28d9); color:#fff; }
+    .btn-outline { background:#fff; border:1.5px solid #e2e8f0; color:#334155; }
+    .btn-outline:hover { background:#f8fafc; border-color:#cbd5e1; }
+    .link-card { display:flex; flex-direction:column; align-items:center; justify-content:center; padding:20px 12px; background:#f8fafc; border:1.5px solid #e2e8f0; border-radius:14px; font-weight:700; font-size:14px; color:#334155; text-decoration:none; gap:8px; min-height:90px; touch-action:manipulation; transition:all .2s; }
+    .link-card:active { background:#eff6ff; border-color:#3b5bdb; color:#3b5bdb; }
+    .stat-box { background:#f8fafc; border:1px solid #e2e8f0; border-radius:10px; padding:14px 8px; text-align:center; }
+    .stat-box .num { font-size:26px; font-weight:800; color:#1e293b; }
+    .stat-box .lbl { font-size:11px; font-weight:600; color:#94a3b8; text-transform:uppercase; margin-top:3px; }
+    .section-title { font-size:13px; font-weight:700; color:#475569; display:flex; align-items:center; gap:7px; margin-bottom:14px; }
+    .perfil-box { border-radius:12px; padding:16px; margin-bottom:10px; }
+    .perfil-box-admin   { background:#eff6ff; border:1.5px solid #bfdbfe; }
+    .perfil-box-cliente { background:#f0fdf4; border:1.5px solid #bbf7d0; }
+    .perfil-box-negocio { background:#faf5ff; border:1.5px solid #e9d5ff; }
+    .logged-box { background:#f8fafc; border:1px solid #e2e8f0; border-radius:10px; padding:12px 14px; }
+    .toast { position:fixed; bottom:24px; left:50%; transform:translateX(-50%); background:#1e293b; color:#fff; padding:12px 20px; border-radius:12px; font-size:13px; font-weight:600; box-shadow:0 4px 20px rgba(0,0,0,.25); z-index:9999; white-space:nowrap; animation:toastIn .25s ease; }
+    @keyframes toastIn { from{opacity:0;transform:translateX(-50%) translateY(10px)} to{opacity:1;transform:translateX(-50%) translateY(0)} }
+    .server-badge { display:inline-flex; align-items:center; gap:5px; font-size:11px; font-weight:700; padding:3px 10px; border-radius:20px; margin-left:8px; }
+    .server-ok  { background:#dcfce7; color:#15803d; }
+    .server-err { background:#fee2e2; color:#dc2626; }
+    .dot { width:7px; height:7px; border-radius:50%; display:inline-block; }
+    .dot-green { background:#16a34a; animation:pulse 1.5s infinite; }
+    .dot-red   { background:#dc2626; }
+    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.4} }
+    .clientes-list { display:flex; flex-direction:column; gap:8px; margin-top:10px; }
+    .cliente-item { display:flex; align-items:center; justify-content:space-between; background:#f8fafc; border:1px solid #e2e8f0; border-radius:10px; padding:10px 12px; font-size:13px; }
+    .cliente-item .nome { font-weight:700; color:#1e293b; }
+    .cliente-item .sub  { font-size:11px; color:#94a3b8; margin-top:2px; }
+    .cliente-item .acoes { display:flex; gap:6px; }
+    .btn-sm { border:none; cursor:pointer; font-family:inherit; font-weight:700; border-radius:7px; padding:5px 10px; font-size:12px; transition:all .15s; touch-action:manipulation; }
+    .btn-sm-blue   { background:#eff6ff; color:#2563eb; }
+    .btn-sm-red    { background:#fef2f2; color:#dc2626; }
+    .btn-sm:active { opacity:.7; transform:scale(.97); }
+    .empty-msg { text-align:center; color:#94a3b8; font-size:13px; padding:16px 0; }
+    .warn-box { background:#fffbeb; border:1.5px solid #fde68a; border-radius:10px; padding:10px 14px; font-size:12px; color:#92400e; margin-top:8px; }
+    @media (max-width: 480px) {
+      .card { padding: 14px; }
+      body { padding: 10px !important; }
+      .perfil-box { padding: 12px; }
+    }
+  </style>
+</head>
+<body class="p-4">
+<div style="max-width:480px;margin:0 auto;">
+
+  <!-- Header -->
+  <div style="text-align:center;margin-bottom:24px;padding-top:8px;">
+    <div style="font-size:42px;margin-bottom:8px;">🚀</div>
+    <h1 style="font-size:20px;font-weight:800;color:#1e293b;margin-bottom:4px;">
+      Iniciador — AnivCRM
+      <span id="server-badge" class="server-badge server-err">
+        <span class="dot dot-red"></span> offline
+      </span>
+    </h1>
+    <p style="font-size:13px;color:#94a3b8;">Ferramentas de desenvolvimento e teste</p>
+  </div>
+
+  <!-- Banco -->
+  <div class="card">
+    <div class="section-title">📦 Banco de Dados</div>
+    <div style="display:flex;gap:10px;">
+      <button id="btn-reset" class="btn btn-danger" style="flex:1" onclick="confirmReset(this)">🗑️ Deletar Tudo (Reset)</button>
+      <button class="btn" style="flex:0.8;background:#475569;color:#fff;" onclick="if(confirm('Limpar tudo no navegador?')) { localStorage.clear(); location.reload(); }">☢️ Limpar Navegador</button>
+    </div>
+  </div>
+
+  <!-- Criar Perfis -->
+  <div class="card">
+    <div class="section-title">👤 Criar Perfil e Logar</div>
+
+    <div class="perfil-box perfil-box-admin">
+      <p style="font-weight:700;color:#1d4ed8;font-size:14px;margin-bottom:2px;">Administrador</p>
+      <p style="color:#3b82f6;font-size:12px;margin-bottom:12px;">Cria no banco e loga automaticamente como admin</p>
+      <button class="btn btn-blue" id="btn-admin" onclick="quickCreate('admin')">
+        👑 Criar e Logar Admin
+      </button>
+    </div>
+
+    <div class="perfil-box perfil-box-cliente">
+      <p style="font-weight:700;color:#15803d;font-size:14px;margin-bottom:2px;">Cliente de Teste</p>
+      <p style="color:#22c55e;font-size:12px;margin-bottom:12px;">Cria no banco e loga automaticamente como cliente</p>
+      <button class="btn btn-green" id="btn-cliente" onclick="quickCreate('cliente')">
+        👤 Criar e Logar Cliente
+      </button>
+    </div>
+
+    <!-- Sugestão de Teste -->
+    <div class="perfil-box" style="background:#fff7ed;border:1.5px solid #fed7aa;">
+      <p style="font-weight:700;color:#c2410c;font-size:14px;margin-bottom:2px;">📌 Sugestão de Teste</p>
+      <p style="color:#ea580c;font-size:12px;margin-bottom:12px;">
+        Qualquer usuário pode indicar. Gera <strong>MASTER novo + NEGOCIO</strong> com <code>is_sugestao=1</code> — nunca vinculado ao usuário. Tabela <code>empresas</code>. <strong>Só aparece no app após aprovação do admin.</strong>
+      </p>
+      <button class="btn" style="background:linear-gradient(135deg,#f97316,#ea580c);color:#fff;" id="btn-sugestao" onclick="criarTeste('sugestao')">
+        📌 Criar Sugestão de Teste
+      </button>
+      <div id="sugestao-warn" class="warn-box" style="display:none;">
+        ⚠️ Nenhum usuário logado. Crie e logue um cliente primeiro.
+      </div>
+    </div>
+
+    <!-- Negócio de Teste -->
+    <div class="perfil-box perfil-box-negocio">
+      <p style="font-weight:700;color:#6d28d9;font-size:14px;margin-bottom:2px;">🏢 Negócio de Teste</p>
+      <p style="color:#7c3aed;font-size:12px;margin-bottom:12px;">
+        Dono do negócio — usa <strong>MASTER + NEGOCIO</strong> do usuário logado. Tabela <code>empresas</code>, <code>status: 01</code> (pendente). <strong>Só aparece no app após o admin aprovar.</strong>
+      </p>
+      <button class="btn btn-purple" id="btn-negocio" onclick="criarTeste('negocio')">
+        🏢 Criar Negócio de Teste
+      </button>
+      <div id="negocio-warn" class="warn-box" style="display:none;">
+        ⚠️ Nenhum usuário logado. Crie e logue um cliente primeiro.
+      </div>
+    </div>
+
+    <!-- Usuário logado -->
+    <div class="logged-box">
+      <p style="font-size:11px;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px;">Usuário logado atualmente</p>
+      <div id="logged-user" class="mono" style="font-size:13px;color:#475569;word-break:break-all;">—</div>
+    </div>
+    <button class="btn btn-outline" style="margin-top:10px;" onclick="logout()">↩ Deslogar</button>
+  </div>
+
+  <!-- Stats -->
+  <div class="card">
+    <div class="section-title">📊 Status do Banco</div>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;">
+      <div class="stat-box"><div class="num" id="s-empresas">—</div><div class="lbl">Empresas</div></div>
+      <div class="stat-box"><div class="num" id="s-clientes">—</div><div class="lbl">Clientes</div></div>
+      <div class="stat-box"><div class="num" id="s-sugestoes">—</div><div class="lbl">Sugestões</div></div>
+    </div>
+  </div>
+
+  <!-- Lista de clientes -->
+  <div class="card">
+    <div class="section-title">🗂️ Clientes no Banco
+      <button onclick="loadClientes()" style="margin-left:auto;background:none;border:none;cursor:pointer;font-size:16px;" title="Atualizar">🔄</button>
+    </div>
+    <div id="clientes-list" class="clientes-list">
+      <div class="empty-msg">Carregando...</div>
+    </div>
+  </div>
+
+  <!-- Atalhos -->
+  <div class="card" style="margin-bottom:32px;">
+    <div class="section-title">🔗 Abrir Páginas</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+      <button onclick="abrirAdmin()" class="link-card" style="border:none;width:100%;cursor:pointer;"><span style="font-size:28px;">⚙️</span>Admin</button>
+      <button onclick="abrirPerfil()" class="link-card" style="border:none;width:100%;cursor:pointer;"><span style="font-size:28px;">👤</span>Perfil</button>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  const AUTH_KEY = 'anivcrm_logged_user';
+
+  // ── Helpers ────────────────────────────────────────────────────────────────
+  function gid(prefix) {
+    const id = Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
+    return prefix ? `${prefix}_${id}` : id;
+  }
+
+  function toast(msg) {
+    document.querySelectorAll('.toast').forEach(t => t.remove());
+    const t = document.createElement('div');
+    t.className = 'toast'; t.textContent = msg;
+    document.body.appendChild(t);
+    setTimeout(() => { t.style.cssText += 'opacity:0;transition:opacity .3s'; setTimeout(() => t.remove(), 300); }, 2800);
+  }
+
+  async function api(method, path, body) {
+    try {
+      const opts = { method, headers: { 'Content-Type': 'application/json' } };
+      if (body) opts.body = JSON.stringify(body);
+      const res = await fetch(path, opts);
+      const text = await res.text();
+      let data;
+      try { data = JSON.parse(text); } catch(e) { data = { error: text }; }
+      if (!res.ok) throw new Error(data.error || 'HTTP ' + res.status);
+      return data;
+    } catch (err) {
+      console.error('API Error:', err);
+      throw err;
+    }
+  }
+
+  // ── Status do servidor ─────────────────────────────────────────────────────
+  async function checkServer() {
+    const badge = document.getElementById('server-badge');
+    try {
+      const s = await api('GET', '/api/stats');
+      badge.className = 'server-badge server-ok';
+      badge.innerHTML = '<span class="dot dot-green"></span> online';
+      document.getElementById('s-empresas').textContent  = s.empresas  ?? '?';
+      document.getElementById('s-clientes').textContent  = s.clientes  ?? '?';
+      document.getElementById('s-sugestoes').textContent = s.sugestoes ?? '?';
+    } catch {
+      badge.className = 'server-badge server-err';
+      badge.innerHTML = '<span class="dot dot-red"></span> offline';
+      ['s-empresas','s-clientes','s-sugestoes'].forEach(id => document.getElementById(id).textContent = '—');
+    }
+  }
+
+  // ── Usuário logado ─────────────────────────────────────────────────────────
+  async function updateLoggedUser() {
+    const uid = localStorage.getItem(AUTH_KEY);
+    const el  = document.getElementById('logged-user');
+    const warn = document.getElementById('negocio-warn');
+    if (!uid) {
+      el.innerHTML = '<span style="color:#94a3b8">Nenhum usuário logado</span>';
+      warn.style.display = 'block';
+      return;
+    }
+    warn.style.display = 'none';
+    try {
+      const u = await api('GET', `/api/clientes/${uid}`);
+      if (u && u.nome) {
+        el.innerHTML = `<span style="color:#16a34a">✓ ${u.nome}</span> <span style="color:#94a3b8;font-size:11px;">(${uid.slice(0,22)}…)</span>`;
+      } else {
+        if (uid) {
+           console.warn("Limpando LocalStorage: usuário não existe no banco.");
+           localStorage.clear();
+           location.reload();
+        }
+        el.innerHTML = '<span style="color:#f59e0b">⚠️ ID salvo mas usuário não encontrado</span>';
+        warn.style.display = 'block';
+      }
+    } catch {
+      el.innerHTML = '<span style="color:#f59e0b">⚠️ Erro ao consultar banco</span>';
+    }
+  }
+
+  // ── Lista de clientes ──────────────────────────────────────────────────────
+  async function loadClientes() {
+    const el  = document.getElementById('clientes-list');
+    const uid = localStorage.getItem(AUTH_KEY);
+    el.innerHTML = '<div class="empty-msg">Carregando...</div>';
+    try {
+      const lista = await api('GET', '/api/clientes');
+      if (!lista.length) { el.innerHTML = '<div class="empty-msg">Nenhum cliente no banco ainda.</div>'; return; }
+      el.innerHTML = lista.map(c => `
+        <div class="cliente-item">
+          <div>
+            <div class="nome">${c.nome}
+              ${c.usuario === uid ? '<span style="font-size:10px;background:#dcfce7;color:#15803d;padding:2px 6px;border-radius:10px;margin-left:4px;">logado</span>' : ''}
+            </div>
+            <div class="sub">${c.nasc || '—'} · ${c.status}</div>
+          </div>
+          <div class="acoes">
+            <button class="btn-sm btn-sm-blue" onclick="logarComo('${c.usuario}','${c.nome.replace(/'/g,"\\'")}')">Logar</button>
+            <button class="btn-sm btn-sm-red" data-id="${c.usuario}" data-nome="${c.nome.replace(/'/g,"\\'")}" onclick="confirmDelete(this)">Excluir</button>
+          </div>
+        </div>`).join('');
+    } catch {
+      el.innerHTML = '<div class="empty-msg" style="color:#dc2626;">Erro ao conectar com o servidor.</div>';
+    }
+  }
+
+  // ── Perfis pré-definidos ───────────────────────────────────────────────────
+  const PERFIS = {
+    cliente: {
+      nome:       'Tonny Teste',
+      nasc:       '1980-07-19',
+      email:      'teste@teste.com',
+      telefone:   '(62) 98545-8886',
+      senha_hash: hashSenha('123456'),
+      rua:        'Av. Goiás',
+      num:        '51',
+      comp:       'Qd 20 Lt 15',
+      bairro:     'Centro',
+      cep:        '74005-010',
+      cidade:     'Goiânia',
+      uf:         'GO',
+    },
+    admin: {
+      nome:       'Tonny Admin',
+      nasc:       '1982-05-02',
+      email:      'admin@admin.com',
+      telefone:   '(62) 98545-8886',
+      senha_hash: hashSenha('123456'),
+      rua:        'Av. Goiás',
+      num:        '84',
+      comp:       'Qd 15 Lt 05',
+      bairro:     'Centro',
+      cep:        '74005-010',
+      cidade:     'Goiânia',
+      uf:         'GO',
+    }
+  };
+
+  function hashSenha(senha) {
+    try { return 'h_' + btoa(unescape(encodeURIComponent(senha))); }
+    catch { return 'h_' + btoa(senha); }
+  }
+
+  // ── Sincroniza banco → localStorage (igual ao db-bridge) ──────────────────
+  async function pullToLocalStorage() {
+    try {
+      const raw  = await api('GET', '/api/bulk-export');
+      // normaliza empresas.horarios de string para objeto
+      if (raw.empresas) {
+        raw.empresas = raw.empresas.map(e => ({
+          ...e,
+          horarios: e.horarios
+            ? (typeof e.horarios === 'string' ? JSON.parse(e.horarios) : e.horarios)
+            : [],
+          is_sugestao: !!e.is_sugestao,
+        }));
+      }
+      if (raw.clientes) {
+        raw.clientes = raw.clientes.map(c => ({
+          ...c,
+          oferta_enviada: !!c.oferta_enviada,
+        }));
+      }
+      localStorage.setItem('anivcrm_v2', JSON.stringify(raw));
+    } catch(e) {
+      console.warn('[launcher] pull falhou:', e.message);
+    }
+  }
+
+  // ── Criar perfil rápido ────────────────────────────────────────────────────
+  async function quickCreate(tipo) {
+    const btnId = tipo === 'admin' ? 'btn-admin' : 'btn-cliente';
+    const btn   = document.getElementById(btnId);
+    const p     = PERFIS[tipo];
+    btn.disabled = true;
+
+    const usuario   = gid('U');
+    const perfil_id = gid('P');
+    const master    = gid('M');
+
+    try {
+      await api('POST', '/api/clientes', {
+        usuario, master, perfil_id,
+        nome:        p.nome,
+        nasc:        p.nasc,
+        email:       p.email,
+        telefone:    p.telefone,
+        senha_hash:  p.senha_hash,
+        rua:         p.rua,
+        num:         p.num,
+        comp:        p.comp,
+        bairro:      p.bairro,
+        cep:         p.cep,
+        cidade:      p.cidade,
+        uf:          p.uf,
+        negocio:     null,
+        sugestao:    null,
+        oferta_enviada: 0,
+        enviado_em:  '',
+        status:      'ativo',
+        criado_em:   new Date().toISOString()
+      });
+      localStorage.setItem(AUTH_KEY, usuario);
+      await pullToLocalStorage();
+      toast(`✅ "${p.nome}" criado e logado! Senha: 123456`);
+      await refresh();
+    } catch (e) {
+      toast(`❌ ${e.message}`);
+    } finally { btn.disabled = false; }
+  }
+
+  // ── Criar sugestão ou negócio de teste ───────────────────────────────────
+  // Negócio → vai para tabela EMPRESAS com master do cliente (dono vinculado), status '01'
+  // Sugestão → vai para tabela SUGESTOES com master próprio, usuario de quem indicou, status '01'
+  async function criarTeste(tipo) {
+    const uid    = localStorage.getItem(AUTH_KEY);
+    const warnId = tipo === 'negocio' ? 'negocio-warn' : 'sugestao-warn';
+    const btnId  = tipo === 'negocio' ? 'btn-negocio'  : 'btn-sugestao';
+    if (!uid) { document.getElementById(warnId).style.display = 'block'; return; }
+
+    let autor;
+    try { autor = await api('GET', `/api/clientes/${uid}`); }
+    catch { toast('❌ Usuário logado não encontrado no banco. Recrie o perfil.'); return; }
+
+    const btn = document.getElementById(btnId);
+    btn.disabled = true;
+
+    const horarios = [
+      { dia:'Domingo',      fechado:false, slots:[{ini:'08:00',fim:'20:00'}], hh:true,  hh_slots:[{ini:'16:00',fim:'18:00'}], hh_nota:'Caipinha', hh_desc:'Caipinha' },
+      { dia:'Segunda-feira',fechado:false, slots:[{ini:'08:00',fim:'18:00'}], hh:true,  hh_slots:[{ini:'15:00',fim:'17:00'}], hh_nota:'Caipinha', hh_desc:'Caipinha' },
+      { dia:'Terça-feira',  fechado:false, slots:[{ini:'08:00',fim:'18:00'}], hh:true,  hh_slots:[{ini:'15:00',fim:'17:00'}], hh_nota:'Caipinha', hh_desc:'Caipinha' },
+      { dia:'Quarta-feira', fechado:true,  slots:[], hh:false, hh_slots:[], hh_nota:'', hh_desc:'' },
+      { dia:'Quinta-feira', fechado:false, slots:[{ini:'08:00',fim:'18:00'}], hh:true,  hh_slots:[{ini:'15:00',fim:'17:00'}], hh_nota:'Caipinha', hh_desc:'Caipinha' },
+      { dia:'Sexta-feira',  fechado:false, slots:[{ini:'08:00',fim:'18:00'}], hh:true,  hh_slots:[{ini:'15:00',fim:'17:00'}], hh_nota:'Caipinha', hh_desc:'Caipinha' },
+      { dia:'Sábado',       fechado:false, slots:[{ini:'08:00',fim:'20:00'}], hh:true,  hh_slots:[{ini:'16:00',fim:'18:00'}], hh_nota:'Caipinha', hh_desc:'Caipinha' }
+    ];
+
+    const camposNegocio = {
+      empresa:        'Bar do Teste',
+      segmento:       'Bar',
+      telefone:       '(11) 99999-0000',
+      email:          'bar@teste.com',
+      ig:             'bardoteste',
+      site:           '',
+      cardapio:       '',
+      rua:            'Rua das Flores',
+      num:            '100',
+      comp:           '',
+      bairro:         'Centro',
+      cep:            '01001-000',
+      cidade:         'São Paulo',
+      uf:             'SP',
+      lat:            null,
+      lng:            null,
+      obs:            'Negócio criado pelo launcher (dono vinculado)',
+      oferta_tipo:    'Produto/Brinde Grátis',
+      oferta_valida:  'No dia do aniversário',
+      oferta_destaque:'Chop 500ml',
+      oferta_detalhe: 'Chop Antártica 500ml gelado na caneca',
+      oferta_regras:  'Válido para grupos de até 10 pessoas',
+      hh_desc:        'Caipinha',
+      horarios,
+      estacionamento: 1,
+      brinquedoteca:  1,
+      comida_vegana:  1,
+      cadeirinha:     1,
+      delivery:       1,
+      status:         '01',
+      aprovado_em:    '',
+      atualizado_em:  '',
+      criado_em:      new Date().toISOString()
+    };
+
+    const camposSugestao = {
+      empresa:        'Vikings Pub',
+      segmento:       'Bar',
+      telefone:       '(62) 99999-9999',
+      email:          '',
+      ig:             'vikingspub',
+      site:           '',
+      cardapio:       '',
+      rua:            'Av. T-7',
+      num:            '921',
+      comp:           '',
+      bairro:         'St. Bueno',
+      cep:            '74210-265',
+      cidade:         'Goiânia',
+      uf:             'GO',
+      lat:            null,
+      lng:            null,
+      obs:            'Sugestão criada pelo launcher (sem vínculo)',
+      oferta_tipo:    'Produto/Brinde Grátis',
+      oferta_valida:  'No dia do aniversário',
+      oferta_destaque:'Chop 500ml',
+      oferta_detalhe: 'Chop Antártica 500ml gelado na caneca',
+      oferta_regras:  'Válido para grupos de até 10 pessoas',
+      hh_desc:        'Caipinha',
+      horarios,
+      estacionamento: 1,
+      brinquedoteca:  1,
+      comida_vegana:  1,
+      cadeirinha:     1,
+      delivery:       1,
+      status:         '01',
+      aprovado_em:    '',
+      atualizado_em:  '',
+      criado_em:      new Date().toISOString()
+    };
+
+    const campos = tipo === 'negocio' ? camposNegocio : camposSugestao;
+
+    try {
+      if (tipo === 'negocio') {
+        // Vai direto para tabela EMPRESAS — master do cliente (ele é o dono)
+        await api('POST', '/api/empresas', {
+          negocio: gid('neg'),
+          master:  autor.master || uid,
+          usuario: uid,
+          ...campos,
+          status_perfil: 'comunidade',
+        });
+        toast(`✅ Negócio criado e vinculado a "${autor.nome}"! Status: pendente (01).`);
+      } else {
+        // Vai para tabela EMPRESAS com is_sugestao=1 — master próprio, sem dono vinculado
+        await api('POST', '/api/empresas', {
+          negocio:      gid('N'),   // N-XXXXXX (PK na tabela empresas)
+          master:       gid('M'),   // master novo, independente do cliente
+          usuario:      '',         // sem dono
+          is_sugestao:  1,
+          indicado_por: uid,        // guarda quem indicou (histórico)
+          ...campos,
+        });
+        toast(`✅ Sugestão criada por "${autor.nome}" (sem vínculo). Status: pendente (01).`);
+      }
+      await refresh();
+    } catch (e) {
+      toast(`❌ ${e.message}`);
+    } finally { btn.disabled = false; }
+  }
+
+  // ── Logar como ────────────────────────────────────────────────────────────
+  async function logarComo(id, nome) {
+    localStorage.setItem(AUTH_KEY, id);
+    await pullToLocalStorage();
+    toast(`✅ Logado como "${nome}"`);
+    await updateLoggedUser(); await loadClientes();
+  }
+
+  // ── Deletar cliente ───────────────────────────────────────────────────────
+  let deleteTimeout = null;
+  async function confirmDelete(btn) {
+    if (btn.textContent === 'Excluir') {
+      btn.textContent = 'Certeza?';
+      btn.classList.add('btn-confirm-active'); // OPCIONAL: estilo de destaque
+      if (deleteTimeout) clearTimeout(deleteTimeout);
+      deleteTimeout = setTimeout(() => {
+        btn.textContent = 'Excluir';
+        btn.classList.remove('btn-confirm-active');
+      }, 3000);
+      return;
+    }
+    
+    const id = btn.getAttribute('data-id');
+    const nome = btn.getAttribute('data-nome');
+    btn.disabled = true;
+    try {
+      const uid = localStorage.getItem(AUTH_KEY);
+      await api('DELETE', '/api/clientes/' + id);
+      if (uid === id) localStorage.removeItem(AUTH_KEY);
+      toast('🗑️ "' + nome + '" excluído.');
+      await refresh();
+    } catch (e) {
+      alert('Erro ao excluir: ' + e.message);
+      btn.disabled = false;
+      btn.textContent = 'Excluir';
+    }
+  }
+
+  // ── Reset banco ───────────────────────────────────────────────────────────
+  let resetTimeout = null;
+  async function confirmReset(btn) {
+    if (btn.textContent.includes('Reset')) {
+      btn.textContent = '⚠️ CONFIRMAR RESET?';
+      if (resetTimeout) clearTimeout(resetTimeout);
+      resetTimeout = setTimeout(() => {
+        btn.textContent = '🗑️ Deletar Tudo (Reset)';
+      }, 4000);
+      return;
+    }
+
+    btn.disabled = true;
+    btn.textContent = 'Limpando...';
+    try {
+      await api('POST', '/api/reset');
+      localStorage.removeItem(AUTH_KEY);
+      toast('✅ Banco resetado com sucesso!');
+      await refresh();
+    } catch (e) {
+      alert('Erro no reset: ' + e.message);
+    } finally {
+      btn.disabled = false;
+      btn.textContent = '🗑️ Deletar Tudo (Reset)';
+    }
+  }
+
+  // ── Logout ────────────────────────────────────────────────────────────────
+  function logout() {
+    localStorage.removeItem(AUTH_KEY);
+    toast('↩ Deslogado.');
+    updateLoggedUser(); loadClientes();
+  }
+
+  // ── Auto-login para Atalhos (bypass acessos.html) ─────────────────────────
+  async function abrirAdmin() {
+    if (!localStorage.getItem(AUTH_KEY)) {
+      await quickCreate('admin');
+    }
+    window.open('/admin', '_blank');
+  }
+
+  async function abrirPerfil() {
+    if (!localStorage.getItem(AUTH_KEY)) {
+      await quickCreate('cliente');
+    }
+    window.open('/', '_blank');
+  }
+
+  // ── Refresh geral ─────────────────────────────────────────────────────────
+  async function refresh() {
+    await Promise.all([checkServer(), updateLoggedUser(), loadClientes()]);
+  }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    refresh();
+    setInterval(checkServer, 5000);
+  });
+
+  window.addEventListener('storage', () => { updateLoggedUser(); loadClientes(); });
+</script>
+</body>
+</html>
